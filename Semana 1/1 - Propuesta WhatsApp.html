@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Modelo Conceptual WhatsApp - Enfoque DUA Mejorado</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css">
+  <style>
+    h1, h2, h3 { text-transform: none; }
+    .big { font-size: 2rem; }
+    .bigger { font-size: 2.8rem; }
+    .highlight { color: #25D366; }
+    .warning { color: #ff6b6b; }
+    .dua { background: rgba(37,211,102,0.15); padding: 20px; border-radius: 12px; }
+    ul { text-align: left; display: inline-block; }
+    .diagram-box { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 8px; 
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .entity { 
+      background: #e8f5e9; 
+      padding: 20px; 
+      margin: 15px;
+      border-radius: 8px;
+      border: 3px solid #25D366;
+      display: inline-block;
+      min-width: 220px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .relation {
+      color: #25D366;
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin: 15px 0;
+    }
+    .card { 
+      background: rgba(255,255,255,0.1); 
+      padding: 15px; 
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      text-align: left;
+    }
+    .pk { color: #FFD700; font-weight: bold; }
+    .fk { color: #FFA500; font-style: italic; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <!-- Slide 1: Introducción -->
+  <section>
+    <h1 class="bigger">Modelo Conceptual WhatsApp</h1>
+    <p class="big">Chat 1 a 1</p>
+  </section>
+
+  <!-- Slide 2: Concepto clave -->
+  <section>
+    <h2>Concepto clave</h2>
+    <div class="card">
+      <p class="big"><span class="warning">NO existe entidad "Contacto"</span></p>
+      <p class="big">Un contacto = <span class="highlight">otro Usuario</span></p>
+    </div>
+  </section>
+
+  <!-- Slide 3: Entidad Usuario -->
+  <section>
+    <h2><span class="highlight">USUARIO</span></h2>
+    <ul class="big">
+      <li><span class="pk">id_usuario</span></li>
+      <li>nombre_perfil</li>
+      <li>numero_telefono</li>
+      <li>foto_perfil</li>
+      <li>estado_texto</li>
+      <li>fecha_registro</li>
+      <li>ultima_conexion</li>
+    </ul>
+  </section>
+
+  <!-- Slide 4: Entidad Agenda -->
+  <section>
+    <h2><span class="highlight">AGENDA</span></h2>
+    <ul class="big">
+      <li><span class="fk">id_usuario_dueño</span></li>
+      <li><span class="fk">id_usuario_contacto</span></li>
+      <li>alias_personalizado</li>
+      <li>fecha_agregado</li>
+      <li>bloqueado</li>
+    </ul>
+  </section>
+
+  <!-- Slide 5: Entidad Chat -->
+  <section>
+    <h2><span class="highlight">CHAT</span></h2>
+    <ul class="big">
+      <li><span class="pk">id_chat</span></li>
+      <li>tipo_chat</li>
+      <li>fecha_creacion</li>
+      <li>archivado</li>
+      <li>silenciado</li>
+    </ul>
+  </section>
+
+  <!-- Slide 6: Entidad Participante -->
+  <section>
+    <h2><span class="highlight">PARTICIPANTE</span></h2>
+    <ul class="big">
+      <li><span class="fk">id_chat</span></li>
+      <li><span class="fk">id_usuario</span></li>
+      <li>fecha_union</li>
+    </ul>
+    <p class="big highlight">2 participantes por chat</p>
+  </section>
+
+  <!-- Slide 7: Entidad Mensaje -->
+  <section>
+    <h2><span class="highlight">MENSAJE</span></h2>
+    <ul class="big">
+      <li><span class="pk">id_mensaje</span></li>
+      <li><span class="fk">id_chat</span></li>
+      <li><span class="fk">id_usuario_remitente</span></li>
+      <li>contenido_texto</li>
+      <li>fecha_hora_envio</li>
+      <li>estado</li>
+      <li>eliminado</li>
+    </ul>
+  </section>
+
+  <!-- Slide 8: Diagrama completo -->
+  <section>
+    <h2>Modelo Entidad-Relación</h2>
+    <div class="diagram-box" style="font-size: 0.9rem;">
+      <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <div class="entity">
+          <strong>USUARIO</strong><br>
+          <span class="pk">id_usuario</span><br>
+          nombre_perfil<br>
+          numero_telefono
+        </div>
+      </div>
+      
+      <div class="relation">⟷ AGENDA (N:M)</div>
+      
+      <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <div class="entity">
+          <strong>USUARIO</strong>
+        </div>
+      </div>
+      
+      <div class="relation">↓ participa (1:N)</div>
+      
+      <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <div class="entity">
+          <strong>PARTICIPANTE</strong><br>
+          <span class="fk">id_usuario</span><br>
+          <span class="fk">id_chat</span>
+        </div>
+      </div>
+      
+      <div class="relation">↓ pertenece (N:1)</div>
+      
+      <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <div class="entity">
+          <strong>CHAT</strong><br>
+          <span class="pk">id_chat</span><br>
+          fecha_creacion
+        </div>
+      </div>
+      
+      <div class="relation">↓ contiene (1:N)</div>
+      
+      <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+        <div class="entity">
+          <strong>MENSAJE</strong><br>
+          <span class="pk">id_mensaje</span><br>
+          contenido_texto<br>
+          estado
+        </div>
+      </div>
+      
+      <div class="relation">↑ enviado por (N:1) USUARIO</div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Cardinalidades -->
+  <section>
+    <h2>Cardinalidades</h2>
+    <div class="grid">
+      <div class="card">
+        <strong>Usuario ⟷ Agenda</strong>
+        <p>N:M</p>
+      </div>
+      <div class="card">
+        <strong>Usuario → Participante</strong>
+        <p>1:N</p>
+      </div>
+      <div class="card">
+        <strong>Chat → Participante</strong>
+        <p>1:N</p>
+      </div>
+      <div class="card">
+        <strong>Chat → Mensaje</strong>
+        <p>1:N</p>
+      </div>
+      <div class="card">
+        <strong>Usuario → Mensaje</strong>
+        <p>1:N</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Ejemplo práctico -->
+  <section>
+    <h2>Ejemplo: Juan y María</h2>
+    <div class="card big">
+      <p>1. Juan agrega a María → <span class="highlight">AGENDA</span></p>
+      <p>2. Inicia conversación → <span class="highlight">CHAT</span></p>
+      <p>3. Sistema crea → <span class="highlight">2 PARTICIPANTES</span></p>
+      <p>4. Juan escribe → <span class="highlight">MENSAJE</span></p>
+    </div>
+  </section>
+
+  <!-- Slide 11: Decisiones de diseño -->
+  <section>
+    <h2>Alcance del modelo</h2>
+    <ul class="big">
+      <li>✅ Agenda como relación N:M</li>
+      <li>✅ Entidad PARTICIPANTE</li>
+      <li>✅ Remitente explícito</li>
+      <li>⛔ Sin grupos</li>
+      <li>⛔ Sin multimedia</li>
+    </ul>
+  </section>
+
+  <!-- Slide 12: Consultas ejemplo -->
+  <section>
+    <h2>Consultas posibles</h2>
+    <div class="card">
+      <p class="big">📋 Contactos de un usuario</p>
+      <p class="big">💬 Mensajes de un chat</p>
+      <p class="big">👥 Chat entre dos usuarios</p>
+      <p class="big">📊 Mensajes por usuario</p>
+    </div>
+  </section>
+
+  <!-- Slide 13: Extensiones futuras -->
+  <section>
+    <h2>Extensiones</h2>
+    <ul class="big">
+      <li>GRUPO con administradores</li>
+      <li>MULTIMEDIA</li>
+      <li>ESTADO_LECTURA</li>
+      <li>LLAMADAS</li>
+      <li>ETIQUETAS</li>
+    </ul>
+  </section>
+
+  <!-- Slide 14: Cierre -->
+  <section>
+    <h1 class="bigger">Modelo Conceptual WhatsApp</h1>
+    <p class="big highlight">Correcto y escalable</p>
+  </section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: true,
+    transition: 'slide',
+    controls: true,
+    progress: true,
+    center: true
+  });
+</script>
+
+</body>
+</html>
