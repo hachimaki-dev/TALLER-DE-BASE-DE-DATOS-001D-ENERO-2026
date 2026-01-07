@@ -22,3 +22,4 @@ select mensaje from mensajes where id_chat= 2;
 SELECT * FROM CHAT;
 
 select * from chat where fecha_creacion = TIMESTAMP '2024-01-15 10:30:00';
+
