@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller SQL - Sistema de Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .level {
+            margin-bottom: 50px;
+        }
+
+        .level-title {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .level-title.intermediate {
+            background: #e67e22;
+        }
+
+        .level-title.advanced {
+            background: #e74c3c;
+        }
+
+        .module {
+            margin-bottom: 40px;
+            border-left: 4px solid #3498db;
+            padding-left: 20px;
+        }
+
+        .module-title {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .exercise {
+            background: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .exercise-number {
+            color: #3498db;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .user-story {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #1565c0;
+        }
+
+        .description {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .toggle-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+
+        .toggle-btn.active {
+            background: #27ae60;
+        }
+
+        .sql-content {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .sql-content.show {
+            display: block;
+        }
+
+        .sql-block {
+            margin-bottom: 15px;
+        }
+
+        .sql-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        pre {
+            margin: 0 !important;
+            border-radius: 4px !important;
+            border: 1px solid #ddd !important;
+        }
+
+        code {
+            font-size: 0.9em !important;
+        }
+
+        .expected-result {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 20px 0;
+            color: #856404;
+        }
+
+        .tip strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .schema-info {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .schema-info h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .schema-table {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .schema-table strong {
+            color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Taller Práctico SQL</h1>
+        <p class="subtitle">Sistema de Mensajería - Oracle Database</p>
+
+        <div class="schema-info">
+            <h3>📊 Estructura de la Base de Datos</h3>
+            <div class="schema-table">
+                <strong>CHAT:</strong> id, fecha_creacion
+            </div>
+            <div class="schema-table">
+                <strong>USUARIOS:</strong> id, nombre, numero_telefono
+            </div>
+            <div class="schema-table">
+                <strong>MENSAJES:</strong> id, fecha_envio, mensaje, id_usuario, id_chat
+            </div>
+            <div class="schema-table">
+                <strong>USUARIOS_CHAT:</strong> id, id_usuarios, id_chat
+            </div>
+        </div>
+
+        <!-- NIVEL BÁSICO -->
+        <div class="level">
+            <div class="level-title">📘 NIVEL BÁSICO - Fundamentos de SELECT</div>
+
+            <!-- Módulo 1: SELECT Simple -->
+            <div class="module">
+                <h2 class="module-title">1. SELECT - Consultas Básicas</h2>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 1.1</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        💬 Como administrador, quiero ver todos los usuarios registrados en el sistema
+                    </div>
+                    <div class="description">
+                        Obtén todos los datos de todos los usuarios.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT * FROM USUARIOS;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">10 filas con id, nombre y numero_telefono de todos los usuarios</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 1.2</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📱 Como usuario, quiero ver solo los nombres y teléfonos de mis contactos
+                    </div>
+                    <div class="description">
+                        Selecciona únicamente las columnas nombre y numero_telefono de la tabla USUARIOS.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT nombre, numero_telefono 
+FROM USUARIOS;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">10 filas mostrando solo nombre y número de teléfono</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 1.3</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📝 Como usuario, quiero ver todos los mensajes que se han enviado
+                    </div>
+                    <div class="description">
+                        Obtén el contenido de todos los mensajes junto con su fecha de envío.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT mensaje, fecha_envio 
+FROM MENSAJES;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">50 filas con el texto del mensaje y su fecha de envío</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 1.4</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📅 Como administrador, quiero ver cuándo se creó cada chat
+                    </div>
+                    <div class="description">
+                        Consulta todos los chats con su ID y fecha de creación.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT id, fecha_creacion 
+FROM CHAT;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">10 filas con el ID del chat y su fecha de creación</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo 2: WHERE -->
+            <div class="module">
+                <h2 class="module-title">2. WHERE - Filtrado de Datos</h2>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 2.1</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        🔍 Como usuario, quiero encontrar un contacto específico por su nombre
+                    </div>
+                    <div class="description">
+                        Busca la información de la usuaria "María González".
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT * 
+FROM USUARIOS 
+WHERE nombre = 'María González';</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">1 fila: id=1, nombre='María González', numero_telefono='+56912345001'</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 2.2</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        💬 Como usuario, quiero ver todos los mensajes de un chat específico
+                    </div>
+                    <div class="description">
+                        Obtén todos los mensajes que pertenecen al chat con id = 1.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT * 
+FROM MENSAJES 
+WHERE id_chat = 1;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">5 mensajes del chat entre María y Juan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 2.3</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📱 Como usuario, quiero ver mis propios mensajes
+                    </div>
+                    <div class="description">
+                        Busca todos los mensajes enviados por el usuario con id = 1 (María González).
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT mensaje, fecha_envio 
+FROM MENSAJES 
+WHERE id_usuario = 1;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">Varios mensajes enviados por María González en diferentes chats</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 2.4</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📅 Como administrador, quiero ver los chats creados en una fecha específica
+                    </div>
+                    <div class="description">
+                        Encuentra los chats creados el 15 de enero de 2024.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT * 
+FROM CHAT 
+WHERE TRUNC(fecha_creacion) = DATE '2024-01-15';</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">1 chat creado el 15 de enero de 2024</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Tip:</strong>
+                    En Oracle, TRUNC(fecha) elimina la hora de un TIMESTAMP, dejando solo la fecha. Esto es útil para comparaciones exactas por día.
+                </div>
+            </div>
+
+            <!-- Módulo 3: ORDER BY -->
+            <div class="module">
+                <h2 class="module-title">3. ORDER BY - Ordenamiento</h2>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 3.1</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📋 Como usuario, quiero ver mis contactos ordenados alfabéticamente
+                    </div>
+                    <div class="description">
+                        Lista todos los usuarios ordenados por nombre de A a Z.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT nombre, numero_telefono 
+FROM USUARIOS 
+ORDER BY nombre ASC;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">10 usuarios ordenados alfabéticamente (Ana Silva, Carlos Rojas, Diego Fernández...)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 3.2</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        ⏰ Como usuario, quiero ver los mensajes de un chat desde el más reciente
+                    </div>
+                    <div class="description">
+                        Obtén los mensajes del chat 1 ordenados del más nuevo al más antiguo.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT mensaje, fecha_envio 
+FROM MENSAJES 
+WHERE id_chat = 1 
+ORDER BY fecha_envio DESC;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">5 mensajes del chat 1, empezando por "Sí, ahí nos vemos!" (más reciente)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 3.3</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📅 Como administrador, quiero ver los chats ordenados por antigüedad
+                    </div>
+                    <div class="description">
+                        Lista todos los chats del más antiguo al más reciente.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT id, fecha_creacion 
+FROM CHAT 
+ORDER BY fecha_creacion ASC;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">10 chats ordenados cronológicamente desde el 15 de enero hasta el 24 de enero</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo 4: DISTINCT -->
+            <div class="module">
+                <h2 class="module-title">4. DISTINCT - Valores Únicos</h2>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 4.1</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        👥 Como administrador, quiero saber qué usuarios han participado en chats
+                    </div>
+                    <div class="description">
+                        Obtén una lista única de todos los usuarios que están en algún chat.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT DISTINCT id_usuarios 
+FROM USUARIOS_CHAT 
+ORDER BY id_chat;usuarios;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">10 IDs únicos de usuarios (del 1 al 10)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 4.2</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        💬 Como usuario, quiero saber en qué chats he escrito mensajes
+                    </div>
+                    <div class="description">
+                        Encuentra todos los chats únicos donde el usuario 1 (María) ha enviado mensajes.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT DISTINCT id_chat 
+FROM MENSAJES 
+WHERE id_usuario = 1 
+ORDER BY id_chat;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">IDs de los chats donde María ha participado (1, 4, 9, 10)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 4.3</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📊 Como administrador, quiero saber qué usuarios han enviado mensajes
+                    </div>
+                    <div class="description">
+                        Obtén una lista única de usuarios que han enviado al menos un mensaje.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT DISTINCT id_usuario 
+FROM MENSAJES 
+ORDER BY id_usuario;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">Todos los IDs únicos de usuarios que han enviado mensajes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NIVEL INTERMEDIO -->
+        <div class="level">
+            <div class="level-title intermediate">🔗 NIVEL INTERMEDIO - Análisis de Datos</div>
+
+            <!-- Módulo 5: Funciones de Agregación -->
+            <div class="module">
+                <h2 class="module-title">5. Funciones de Agregación (COUNT, MAX, MIN)</h2>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 5.1</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📊 Como administrador, quiero saber cuántos usuarios hay registrados
+                    </div>
+                    <div class="description">
+                        Cuenta el total de usuarios en el sistema.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT COUNT(*) AS total_usuarios 
+FROM USUARIOS;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">total_usuarios: 10</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 5.2</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        💬 Como usuario, quiero saber cuántos mensajes tiene mi chat
+                    </div>
+                    <div class="description">
+                        Cuenta cuántos mensajes hay en el chat con id = 2.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT COUNT(*) AS total_mensajes 
+FROM MENSAJES 
+WHERE id_chat = 2;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">total_mensajes: 5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 5.3</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📅 Como administrador, quiero saber cuál es el chat más antiguo y el más reciente
+                    </div>
+                    <div class="description">
+                        Encuentra la fecha del primer y último chat creado.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT 
+    MIN(fecha_creacion) AS primer_chat,
+    MAX(fecha_creacion) AS ultimo_chat 
+FROM CHAT;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">primer_chat: 15-ENE-24, ultimo_chat: 24-ENE-24</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 5.4</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        ⏰ Como usuario, quiero saber cuándo envié mi primer y último mensaje
+                    </div>
+                    <div class="description">
+                        Encuentra la fecha del primer y último mensaje del usuario 1 (María).
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT 
+    MIN(fecha_envio) AS primer_mensaje,
+    MAX(fecha_envio) AS ultimo_mensaje 
+FROM MENSAJES 
+WHERE id_usuario = 1;</code></pre>
+                        </div>
+                        <div class="sql-block">
+                            <span class="sql-label">Resultado esperado:</span>
+                            <div class="expected-result">Fechas del primer y último mensaje enviado por María</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Módulo 6: GROUP BY y HAVING -->
+            <div class="module">
+                <h2 class="module-title">6. GROUP BY y HAVING - Agrupaciones</h2>
+
+                <div class="exercise">
+                    <div class="exercise-header">
+                        <span class="exercise-number">Ejercicio 6.1</span>
+                        <button class="toggle-btn" onclick="toggleSolution(this)">Ver Solución</button>
+                    </div>
+                    <div class="user-story">
+                        📊 Como administrador, quiero saber cuántos mensajes tiene cada chat
+                    </div>
+                    <div class="description">
+                        Cuenta los mensajes agrupados por chat.
+                    </div>
+                    <div class="sql-content">
+                        <div class="sql-block">
+                            <span class="sql-label">Consulta SQL:</span>
+                            <pre><code class="language-sql">SELECT 
+    id_chat, 
+    COUNT(*) AS cantidad_mensajes 
+FROM MENSAJES 
+GROUP BY id_chat 
+ORDER BY id_
