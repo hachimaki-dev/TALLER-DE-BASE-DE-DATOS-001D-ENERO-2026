@@ -5,6 +5,38 @@
 -- TABLAS PRINCIPALES
 -- ============================================================================
 
+--PAIS
+CREATE TABLE pais(
+    id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    NOMBRE VARCHAR(100) NOT NULL,
+    CODIGO_ISO VARCHAR(3) UNIQUE NOT NULL
+);
+
+--GENEROS
+CREATE TABLe GENEROS(
+    id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre_genero VARCHAR(50) not null
+);
+--SISTEMAS DE CLASIFICACION
+CREATE TABLE sistemas_clasificacion(
+    id_sistema NUMBER GENERATED ALWAYS as IDENTITY PRIMARY KEY,
+    nombre_sistema VARCHAR not null,
+    region VARCHAR not null
+);
+
+--clasificaciones_detalle
+CREATE TABLE Clasificaciones_Detalle (
+    id_clasificacion NUMBER GENERATED ALWAYS as IDENTITY PRIMARY KEY,
+    codigo VARCHAR (10) not null,
+    edad_minima
+    --descripcion CLOB not null
+);
+
+--Restricciones_Edad
+
+
+
+
 -- USUARIOS
 CREATE TABLE usuarios (
     id_usuario NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -12,15 +44,17 @@ CREATE TABLE usuarios (
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT SYSTIMESTAMP,
-    pais VARCHAR(100),
+    id VARCHAR(100) REFERENCES PAIS(id) not null,
     saldo_cartera DECIMAL(10,2) DEFAULT 0.00
 );
+
+
 
 -- DESARROLLADORES
 CREATE TABLE desarrolladores (
     id_desarrollador NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
-    pais VARCHAR(100),
+    id VARCHAR(100) REFERENCES PAIS(id) not null,
     sitio_web VARCHAR(255)
 );
 
@@ -31,7 +65,7 @@ CREATE TABLE juegos (
     descripcion TEXT,
     fecha_lanzamiento DATE,
     precio DECIMAL(10,2),
-    id_desarrollador INT,
+    id_desarrollador NUMBER,
     clasificacion_edad VARCHAR(10),
     imagen_portada VARCHAR(255),
     
@@ -52,6 +86,8 @@ CREATE TABLE caracteristicas (
     descripcion TEXT
 );
 
+--caracteristicas, referencia id hacia la tabla joystick (la cantidad players), idiomas, clasifiacion_edades_juego
+
 -- ============================================================================
 -- TABLAS DE RELACIÓN
 -- ============================================================================
@@ -61,7 +97,7 @@ CREATE TABLE biblioteca_usuario (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_usuario INT REFERENCES usuarios(id_usuario) not NULL,
     id_juego INT REFERENCES juegos(id_juego) NOT NULL,
-    fecha_adquisicion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_adquisicion TIMESTAMP DEFAULT SYSTIMESTAMP,
     tiempo_jugado INT DEFAULT 0
 );
 
@@ -85,7 +121,7 @@ CREATE TABLE resenas (
     id_usuario INT REFERENCES usuarios(id_usuario) NOT NULL,
     id_juego INT REFERENCES juegos(id_juego) NOT NULL,
     texto_resena TEXT,
-    fecha_publicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_publicacion TIMESTAMP DEFAULT SYSTIMESTAMP
 );
 
 -- TRANSACCIONES
@@ -93,7 +129,7 @@ CREATE TABLE transacciones (
     id_transaccion NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_usuario INT REFERENCES usuarios(id_usuario) NOT NULL,
     id_juego INT REFERENCES juegos(id_juego) NOT NULL,
-    fecha_transaccion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_transaccion TIMESTAMP DEFAULT SYSTIMESTAMP,
     monto_pagado DECIMAL(10,2) NOT NULL,
     metodo_pago VARCHAR(50),
     estado VARCHAR2(20) DEFAULT 'completada' 
@@ -105,5 +141,5 @@ CREATE TABLE amistades (
     id_amistad NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_usuario1 INT REFERENCES usuarios(id_usuario) NOT NULL,
     id_usuario2 INT REFERENCES usuarios(id_usuario) NOT NULL,
-    fecha_amistad TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_amistad TIMESTAMP DEFAULT SYSTIMESTAMP
 );
