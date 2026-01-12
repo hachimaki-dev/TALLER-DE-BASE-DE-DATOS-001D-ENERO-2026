@@ -285,9 +285,9 @@ END;</code></pre>
                             </div>
                         </div>
                         
-                        <button class="bg-black text-white px-8 py-3 text-2xl font-bangers hover:scale-105 transition-transform">
-                            PRESS START FOR LEVEL 2
-                        </button>
+                        <a href="taller.html" class="inline-block bg-orange-500 text-white px-8 py-4 text-3xl font-bangers border-4 border-black shadow-solid-md hover:scale-110 hover:-rotate-1 transition-transform">
+                            START WORKSHOP 🛠️
+                        </a>
                     </div>
                 `
             }
