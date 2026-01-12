@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Semana 2 - Taller de Base de Datos</title>
+    <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #0055a5;
+            --accent-color: #e6f0fa;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #ddd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.2em;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .theme-box {
+            background-color: var(--accent-color);
+            border: 1px solid var(--secondary-color);
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .theme-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .theme-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 5px;
+        }
+
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #d63384;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .important-note {
+            background-color: #fff3cd;
+            border-left: 5px solid var(--warning-color);
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--light-text);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Evaluación Semana 2</h1>
+            <p>Defensa de Modelo y Lógica de Negocio PL/SQL</p>
+        </header>
+
+        <section>
+            <h2>Descripción de la Actividad</h2>
+            <p>En esta evaluación, los estudiantes deberán presentar y defender los avances de su proyecto de base de
+                datos personal. El objetivo es demostrar la solidez de su diseño (Conceptual y Lógico normalizado), así
+                como la capacidad de extraer valor de los datos mediante consultas SQL y aplicar lógica de negocio
+                compleja utilizando PL/SQL.</p>
+
+            <div class="theme-box">
+                <strong>Temas de Proyecto Asignados:</strong>
+                <p>Los proyectos deben estar basados en una de las siguientes plataformas, aplicando las reglas de
+                    negocio pertinentes:</p>
+                <div class="theme-list">
+                    <div class="theme-item">Crunchyroll</div>
+                    <div class="theme-item">MercadoLibre</div>
+                    <div class="theme-item">Steam</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Requerimientos de la Entrega</h2>
+
+            <h3>1. Modelamiento de Datos</h3>
+            <ul>
+                <li><strong>Modelo Conceptual:</strong> Presentar el diagrama Entidad-Relación o modelo conceptual de la
+                    problemática. Explicar las entidades principales y sus relaciones.</li>
+                <li><strong>Modelo Lógico Normalizado (3FN):</strong> Mostrar el modelo lógico final, asegurando y
+                    <strong>defendiendo</strong> que se encuentra en Tercera Forma Normal (3FN). Deben justificar sus
+                    decisiones de diseño.</li>
+            </ul>
+
+            <h3>2. Consultas SQL (Valor de los Datos)</h3>
+            <p>Deben presentar una serie de consultas que aporten información útil para su problemática, utilizando las
+                siguientes cláusulas:</p>
+            <ul>
+                <li><code>SELECT</code>: Proyección de columnas relevantes.</li>
+                <li><code>WHERE</code>: Filtrado de datos según criterios de negocio.</li>
+                <li><code>ORDER BY</code>: Ordenamiento lógico de la información.</li>
+                <li><code>DISTINCT</code>: Eliminación de duplicados innecesarios.</li>
+                <li><code>GROUP BY</code>: Agregación de datos (usando COUNT, SUM, AVG, etc.).</li>
+            </ul>
+
+            <h3>3. Programación PL/SQL (Lógica de Negocio)</h3>
+            <p>Implementar bloques anónimos PL/SQL que resuelvan reglas de negocio o auditoría dentro de su sistema. Uso
+                obligatorio de:</p>
+            <ul>
+                <li><strong>IF / ELSIF / ELSE:</strong> Para validaciones lógicas y manejo de condiciones.</li>
+                <li><strong>LOOP (Basic, While o For):</strong> Para iteraciones sobre datos o contadores.</li>
+                <li><strong>RECORD:</strong> Definición de tipos de registro personalizados.</li>
+                <li><strong>VARRAY:</strong> Uso de arreglos para manejo de colecciones en memoria.</li>
+            </ul>
+
+            <div class="important-note">
+                <strong>Nota Importante:</strong> El código PL/SQL debe tener sentido dentro del contexto del proyecto
+                seleccionado (Crunchyroll, MercadoLibre o Steam). No se aceptan ejemplos genéricos; deben resolver un
+                problema real (ej: calcular suscripciones, validar stock, historial de compras, etc.).
+            </div>
+        </section>
+
+        <section>
+            <h2>Pauta de Evaluación (Rúbrica)</h2>
+            <p><strong>Ponderación Total:</strong> 100%</p>
+
+            <h3>A. Presentación y Defensa (40%)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Criterio</th>
+                        <th>Descripción</th>
+                        <th style="width: 10%;">Puntaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Claridad y Oratoria</strong></td>
+                        <td>Exposición fluida, clara y profesional. Lenguaje técnico adecuado y buen uso del material de
+                            apoyo.</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Defensa del Modelo</strong></td>
+                        <td>Argumentos sólidos sobre el cumplimiento de 3FN y satisfacción de la problemática.
+                            Respuestas correctas a preguntas.</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Calidad del Material</strong></td>
+                        <td>Material visual legible, ordenado y facilitador de la comprensión.</td>
+                        <td>10%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>B. Contenido Técnico (60%)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Criterio</th>
+                        <th>Descripción</th>
+                        <th style="width: 10%;">Puntaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Modelamiento (3FN)</strong></td>
+                        <td>Modelo correctamente normalizado (3FN). Relaciones y cardinalidades correctas.</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Consultas SQL</strong></td>
+                        <td>Consultas funcionales y sin errores. Aportan valor al negocio. Uso correcto de clausulas
+                            solicitadas.</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Uso de PL/SQL</strong></td>
+                        <td>Implementación de bloques funcionales con lógica coherente.</td>
+                        <td>10%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Estructuras PL/SQL</strong></td>
+                        <td>Implementación explícita y correcta de IF, LOOP, RECORD y VARRAY.</td>
+                        <td>20%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Entregables</h2>
+            <ol>
+                <li><strong>Script SQL/PLSQL:</strong> Archivo <code>.sql</code> con creación de tablas, datos de prueba
+                    y bloques de código.</li>
+                <li><strong>Presentación:</strong> Archivo de presentación (PPT/PDF) o diagrama final.</li>
+            </ol>
+        </section>
+
+        <footer>
+            <p>Taller de Base de Datos - Enero 2026</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>
