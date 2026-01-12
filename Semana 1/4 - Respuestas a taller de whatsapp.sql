@@ -2,8 +2,6 @@
 
 SELECT nombre, numero_telefono FROM USUARIOS;
 
-
-
 --📝 Como usuario, quiero ver todos los mensajes que se han enviado
 select mensaje from mensajes;
 
