@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensa Proyecto - Semana 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --slide-bg: #16213e;
+            --text: #eaeaea;
+            --accent: #e94560;
+            --code-bg: #0f3460;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- CONTENEDORES --- */
+        .slide-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px 40px;
+            background-color: var(--slide-bg);
+            overflow-y: auto; /* Scroll vertical si es necesario */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 1;
+        }
+
+        /* --- TIPOGRAFÍA --- */
+        h1 { color: var(--accent); margin-bottom: 10px; text-align: center; }
+        h2 { border-bottom: 2px solid var(--accent); padding-bottom: 5px; width: 100%; max-width: 1000px; }
+        h3 { color: #4ecdc4; margin-top: 20px; align-self: flex-start; width: 100%; max-width: 1000px; }
+        p { max-width: 1000px; line-height: 1.5; }
+
+        /* --- CÓDIGO Y DIAGRAMAS --- */
+        pre {
+            background-color: #0d1117;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+            overflow-x: auto;
+            width: 100%;
+            max-width: 1000px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .mermaid-wrapper {
+            background-color: #ffffff10; /* Fondo semitransparente para contraste */
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto; /* Scroll horizontal para diagramas grandes */
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        /* Forzar que el SVG no se encoja */
+        .mermaid svg {
+            max-width: none !important; 
+            min-width: 800px; 
+        }
+
+        /* --- CONTROLES --- */
+        .nav-controls {
+            height: 60px;
+            background-color: #0f1526;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { filter: brightness(1.2); }
+        button:disabled { background-color: #555; cursor: default; }
+
+        /* --- GRID RESPONSIVE --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 10px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            pre { font-size: 0.7rem; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-container">
+
+    <div class="slide active">
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center;">
+            <h1>Evaluación Semana 2</h1>
+            <h2 style="border:none; text-align: center;">Defensa de Modelo y Lógica PL/SQL</h2>
+            <p><strong>Proyecto:</strong> Plataforma de Anime (Estilo Crunchyroll)</p>
+            <p>Taller de Base de Datos - Enero 2026</p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>1.1 Modelo Conceptual</h2>
+        <p>Vista de alto nivel que muestra las entidades principales y cómo interactúan las reglas de negocio (sin detalles de atributos).</p>
+        
+        <div class="mermaid-wrapper">
+            <div class="mermaid">
+            erDiagram
+                USUARIO ||--o{ SUSCRIPCION : adquiere
+                SUSCRIPCION }|--|| PLAN : define_beneficios
+                USUARIO ||--o{ PERFIL : gestiona_multiples
+                USUARIO ||--o{ PAGO : genera
+                
+                PERFIL }|--|{ CONTENIDO : visualiza_y_marca
+                CONTENIDO }|--|| ESTUDIO : producido_por
+                CONTENIDO }|--|{ TEMPORADA : se_divide_en
+                TEMPORADA }|--|{ EPISODIO : contiene
+                
+                CONTENIDO }o--o{ GENERO : clasificado
+                CONTENIDO }o--o{ TAG : etiquetado
+                CONTENIDO }o--o{ REGION : restriccion_geo
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>1.2 Modelo Lógico Normalizado (3FN)</h2>
+        <p>Modelo detallado con claves foráneas, tipos de datos y tablas intermedias para romper relaciones Muchos-a-Muchos.</p>
+        
+        <div class="mermaid-wrapper">
+            <div class="mermaid">
+            erDiagram
+                USUARIOS ||--o{ SUSCRIPCIONES : FK_usuario
+                PLANES_SUSCRIPCION ||--o{ SUSCRIPCIONES : FK_plan
+                SUSCRIPCIONES ||--o{ PAGOS : FK_suscripcion
+                USUARIOS ||--o{ PERFILES : FK_usuario
+                
+                PERFILES ||--o{ HISTORIALES : registra
+                CONTENIDOS ||--o{ HISTORIALES : visto
+                EPISODIOS ||--o{ HISTORIALES : detalle
+                
+                CONTENIDOS ||--o{ TEMPORADAS : FK_contenido
+                TEMPORADAS ||--o{ EPISODIOS : FK_temporada
+                
+                CONTENIDOS }|--|| STUDIOS : FK_studio_principal
+                CONTENIDOS }|--|| EDADES : clasificacion
+                
+                CONTENIDO_GENEROS }|--|| CONTENIDOS : FK
+                CONTENIDO_GENEROS }|--|| GENEROS : FK
+                
+                CONTENIDO_TAGS }|--|| CONTENIDOS : FK
+                CONTENIDO_TAGS }|--|| TAGS : FK
+                
+                CONTENIDO_STUDIOS }|--|| CONTENIDOS : FK
+                CONTENIDO_STUDIOS }|--|| STUDIOS : FK
+            </div>
+        </div>
+        <p style="font-size: 0.8rem; text-align:center;">(Se muestran las relaciones clave para legibilidad)</p>
+    </div>
+
+    <div class="slide">
+        <h2>2. Consultas SQL (Finanzas y Marketing)</h2>
+        <div class="grid-2">
+            <div>
+                <h3>Reporte de Ingresos</h3>
+                <pre>
+SELECT metodo_pago,
+COUNT(id) as "Total de transacciones",
+SUM(monto) as "Ingreso Total"
+FROM PAGOS
+WHERE estado = 'completado'
+GROUP BY metodo_pago 
+ORDER BY "Ingreso Total" desc;</pre>
+            </div>
+            <div>
+                <h3>Contenido Clásico</h3>
+                <pre>
+SELECT titulo_contenido,
+fecha_salida,
+estado
+FROM CONTENIDOS
+WHERE fecha_salida < TO_DATE('01/01/2010', 'DD/MM/YYYY')
+ORDER BY fecha_salida asc;</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>2. Consultas SQL (Catálogo)</h2>
+        <div class="grid-2">
+            <div>
+                <h3>Catálogo de Estudios (DISTINCT)</h3>
+                <pre>
+SELECT DISTINCT 
+s.nombre_studio,
+s.url_studio
+FROM STUDIOS s 
+join CONTENIDOS c on c.id_studio = s.id 
+join CONTENIDO_STUDIOS cs ON cs.id_contenido = c.id
+ORDER BY nombre_studio;</pre>
+            </div>
+            <div>
+                <h3>Promedio Duración (AVG)</h3>
+                <pre>
+SELECT id_contenido,
+COUNT(id) as "Cantidad de episodios",
+ROUND(AVG(duracion_episodio), 2) as "Duracion promedio"
+FROM EPISODIOS
+GROUP BY id_contenido 
+ORDER BY "Cantidad de episodios" DESC;</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>3. PL/SQL: Lógica Condicional (IF/ELSE)</h2>
+        <h3>Clasificación de Planes</h3>
+        <pre>
+DECLARE
+    v_nombre_plan  PLANES_SUSCRIPCION.NOMBRE_PLAN%TYPE;
+    v_bloqueo_ads  PLANES_SUSCRIPCION.BLOQUEO_ADS%TYPE;
+    v_descarga     PLANES_SUSCRIPCION.DESCARGA_OFFLINE%TYPE;
+    v_precio       PLANES_SUSCRIPCION.PRECIO_PLAN%TYPE;
+    v_clasificacion VARCHAR2(50);
+BEGIN
+    SELECT nombre_plan, bloqueo_ads, descarga_offline, precio_plan
+    INTO v_nombre_plan, v_bloqueo_ads, v_descarga, v_precio
+    FROM PLANES_SUSCRIPCION WHERE id = 3;
+
+    IF v_bloqueo_ads = 'S' AND v_descarga = 'S' THEN
+        v_clasificacion := 'Premium (COMPLETO)';
+    ELSIF v_bloqueo_ads = 'S' OR v_descarga = 'S' THEN
+        v_clasificacion := 'Estandar (BALANCEADO)';
+    ELSE
+        v_clasificacion := 'Basico (LIMITADO)';
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Plan: ' || v_nombre_plan || ' - ' || v_clasificacion);
+END;
+/</pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. PL/SQL: Iteraciones (LOOP)</h2>
+        <h3>Auditoría de Usuarios (Top 5)</h3>
+        <pre>
+DECLARE 
+    v_nombre_usuario    USUARIOS.NOMBRE_USUARIO%TYPE;
+    v_estado            USUARIOS.USUARIO_ACTIVO%TYPE; 
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- Verificación 5 primeros Usuarios ---');
+    FOR i IN 1..5 LOOP
+        BEGIN
+            SELECT nombre_usuario, usuario_activo
+            INTO v_nombre_usuario, v_estado
+            FROM USUARIOS WHERE id = i;
+
+            DBMS_OUTPUT.PUT_LINE('ID ' || i || ': ' || v_nombre_usuario || 
+                                 ' [Activo: ' || v_estado || ']');
+        END;
+    END LOOP;
+END;
+/</pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. PL/SQL: Estructuras (RECORD)</h2>
+        <h3>Ficha Resumen de Temporada</h3>
+        <pre>
+DECLARE
+    TYPE t_resumen IS RECORD(
+        nombre TEMPORADAS.NOMBRE_TEMPORADA%TYPE,
+        fecha  TEMPORADAS.FECHA_INICIO%TYPE,
+        total_eps TEMPORADAS.TOTAL_EPISODIOS%TYPE,
+        mensaje VARCHAR2(100)
+    );
+    v_tempo_info t_resumen;
+BEGIN
+    SELECT nombre_temporada, fecha_inicio, total_episodios, 'Disponible ahora'
+    INTO v_tempo_info.nombre, v_tempo_info.fecha, 
+         v_tempo_info.total_eps, v_tempo_info.mensaje
+    FROM TEMPORADAS WHERE id = 1; 
+    
+    DBMS_OUTPUT.PUT_LINE('Título: ' || v_tempo_info.nombre);
+    DBMS_OUTPUT.PUT_LINE('Lanzamiento: ' || TO_CHAR(v_tempo_info.fecha));
+    DBMS_OUTPUT.PUT_LINE('Episodios: ' || v_tempo_info.total_eps);
+END;
+/</pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. PL/SQL: Colecciones (VARRAY)</h2>
+        <h3>Verificación Masiva de Géneros</h3>
+        <pre>
+DECLARE
+    TYPE t_lista_generos is VARRAY(4) OF VARCHAR(50);
+    v_genero t_lista_generos := t_lista_generos('Acción', 'Comedia', 
+                                                'Mecha', 'Terror');
+    v_conteo NUMBER;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- Búsqueda desde Array ---');
+    FOR i IN 1 .. v_genero.COUNT LOOP
+        SELECT COUNT(*) INTO v_conteo
+        FROM GENEROS WHERE nombre_genero = v_genero(i);
+
+        IF v_conteo > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('[OK] ' || v_genero(i) || ' existe.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('[X]  ' || v_genero(i) || ' NO existe.');
+        END IF;
+    END LOOP;
+END;
+/</pre>
+    </div>
+
+</div>
+
+<div class="nav-controls">
+    <button id="prevBtn" onclick="changeSlide(-1)">❮ Anterior</button>
+    <span id="pageIndicator" style="color: #888; font-weight: bold;">1 / 9</span>
+    <button id="nextBtn" onclick="changeSlide(1)">Siguiente ❯</button>
+</div>
+
+<script>
+    // Configuración Inicial de Mermaid
+    mermaid.initialize({ 
+        startOnLoad: true, 
+        theme: 'dark',
+        securityLevel: 'loose'
+    });
+
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const indicator = document.getElementById('pageIndicator');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function showSlide(index) {
+        if (index >= slides.length) currentSlide = 0;
+        if (index < 0) currentSlide = slides.length - 1;
+
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === currentSlide) {
+                slide.classList.add('active');
+            }
+        });
+
+        indicator.innerText = `${currentSlide + 1} / ${slides.length}`;
+        
+        // Control botones
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === slides.length - 1;
+    }
+
+    function changeSlide(direction) {
+        currentSlide += direction;
+        showSlide(currentSlide);
+    }
+
+    // Teclado
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    // Iniciar
+    showSlide(0);
+</script>
+
+</body>
+</html>
