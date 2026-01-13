@@ -38,7 +38,7 @@ CREATE TABLE TARJETA(
     nombre_titular VARCHAR2(40)NOT NULL,
     numero_tarjeta VARCHAR2(30) NOT NULL,
     digito_verificador VARCHAR2(3) NOT NULL,
-    fecha_vencimiento DATE,
+    v_fecha_vencimiento DATE,
     rut_titular VARCHAR2(20)NOT NULL,
     id_tipo_tarjeta NUMBER REFERENCES TIPO_TARJETAS(id) NOT NULL
 );
@@ -220,16 +220,16 @@ INSERT INTO TIPO_TARJETAS (tipo_tarjeta) VALUES ('Prepago');
 INSERT INTO TIPO_TARJETAS (tipo_tarjeta) VALUES ('Crédito');
 
 -- INSERT EN TARJETA
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Juan Pérez', '4532123456789012', '123', TO_DATE('2027-12-31', 'YYYY-MM-DD'), '12345678-9', 1);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('María González', '5412345678901234', '456', TO_DATE('2028-06-30', 'YYYY-MM-DD'), '23456789-0', 2);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Carlos Rodríguez', '4916123456789012', '789', TO_DATE('2026-11-30', 'YYYY-MM-DD'), '34567890-1', 3);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Ana Martínez', '3782123456789012', '234', TO_DATE('2027-08-31', 'YYYY-MM-DD'), '45678901-2', 4);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Pedro Silva', '6011123456789012', '567', TO_DATE('2029-03-31', 'YYYY-MM-DD'), '56789012-3', 5);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Laura Fernández', '5012345678901234', '890', TO_DATE('2028-10-31', 'YYYY-MM-DD'), '67890123-4', 6);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Diego Castro', '4539123456789012', '345', TO_DATE('2027-05-31', 'YYYY-MM-DD'), '78901234-5', 7);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Sofía Ramírez', '5412987654321098', '678', TO_DATE('2026-12-31', 'YYYY-MM-DD'), '89012345-6', 8);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Andrés Torres', '4916987654321098', '901', TO_DATE('2029-07-31', 'YYYY-MM-DD'), '90123456-7', 9);
-INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Valentina Morales', '3782987654321098', '234', TO_DATE('2028-02-28', 'YYYY-MM-DD'), '01234567-8', 10);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Juan Pérez', '4532123456789012', '123', TO_DATE('2027-12-31', 'YYYY-MM-DD'), '12345678-9', 1);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('María González', '5412345678901234', '456', TO_DATE('2028-06-30', 'YYYY-MM-DD'), '23456789-0', 2);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Carlos Rodríguez', '4916123456789012', '789', TO_DATE('2026-11-30', 'YYYY-MM-DD'), '34567890-1', 3);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Ana Martínez', '3782123456789012', '234', TO_DATE('2027-08-31', 'YYYY-MM-DD'), '45678901-2', 4);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Pedro Silva', '6011123456789012', '567', TO_DATE('2029-03-31', 'YYYY-MM-DD'), '56789012-3', 5);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Laura Fernández', '5012345678901234', '890', TO_DATE('2028-10-31', 'YYYY-MM-DD'), '67890123-4', 6);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Diego Castro', '4539123456789012', '345', TO_DATE('2027-05-31', 'YYYY-MM-DD'), '78901234-5', 7);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Sofía Ramírez', '5412987654321098', '678', TO_DATE('2026-12-31', 'YYYY-MM-DD'), '89012345-6', 8);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Andrés Torres', '4916987654321098', '901', TO_DATE('2029-07-31', 'YYYY-MM-DD'), '90123456-7', 9);
+INSERT INTO TARJETA (nombre_titular, numero_tarjeta, digito_verificador, v_fecha_vencimiento, rut_titular, id_tipo_tarjeta) VALUES ('Valentina Morales', '3782987654321098', '234', TO_DATE('2028-02-28', 'YYYY-MM-DD'), '01234567-8', 10);
 
 -- INSERTS EN TARJETAS_USUARIOS
 INSERT INTO TARJETAS_USUARIOS (id_usuario, id_tarjeta) VALUES (1, 1);
@@ -279,4 +279,158 @@ INSERT INTO USUARIOS_DOMICILIO (id_direccion, id_usuario) VALUES (8, 8);
 INSERT INTO USUARIOS_DOMICILIO (id_direccion, id_usuario) VALUES (9, 9);
 INSERT INTO USUARIOS_DOMICILIO (id_direccion, id_usuario) VALUES (10, 10);
 
+-- CONSULTAS --
+--Listar todos los productos de una categoría específica ordenados por precio de mayor a menor
+SELECT * FROM PRODUCTO;
+SELECT * FROM CATEGORIAS;
+
+SELECT nombre_categoria,nombre_producto, valor_producto FROM CATEGORIAS
+INNER JOIN PRODUCTO_CATEGORIAS ON CATEGORIAS.id=PRODUCTO_CATEGORIAS.id_categoria
+INNER JOIN PRODUCTO ON PRODUCTO_CATEGORIAS.id= PRODUCTO.id
+WHERE nombre_categoria ='Hogar'
+ORDER BY valor_producto DESC;
+
+--Obtener todos los usuarios que viven en una región específica
+SELECT * FROM USUARIOS;
 SELECT * FROM USUARIOS_DOMICILIO;
+SELECT * FROM DOMICILIO;
+SELECT * FROM COMUNA;
+SELECT * FROM REGION;
+
+SELECT u.nombre_usuario, r.nombre_region FROM USUARIOS u
+INNER JOIN USUARIOS_DOMICILIO ud ON u.id=ud.id_usuario
+INNER JOIN DOMICILIO d ON ud.id_direccion=d.id
+INNER JOIN COMUNA c ON d.id_comuna=c.id
+INNER JOIN REGION r ON c.id_region=r.id
+WHERE nombre_region = 'Valparaíso';
+
+--Mostrar todas las tarjetas que vencen en los próximos 12 meses
+
+SELECT * FROM TARJETA;
+SELECT numero_tarjeta, v_fecha_vencimiento FROM TARJETA 
+WHERE v_fecha_vencimiento 
+    BETWEEN SYSDATE AND ADD_MONTHS (SYSDATE,12);
+
+--Mostrar todas las regiones distintas donde hay usuarios registrados
+SELECT * FROM USUARIOS_DOMICILIO;
+SELECT * FROM DOMICILIO;
+SELECT * FROM COMUNA;
+SELECT * FROM REGION;
+SELECT * FROM USUARIOS;
+
+SELECT DISTINCT nombre_region FROM REGION r
+INNER JOIN COMUNA c ON r.id=c.id_region
+INNER JOIN DOMICILIO d ON c.id=d.id_comuna
+INNER JOIN USUARIOS_DOMICILIO ud ON d.id=ud.id_direccion
+INNER JOIN USUARIOS u ON ud.id_usuario= u.id;
+
+
+--Obtener los distintos tipos de tarjetas
+SELECT * FROM TIPO_TARJETAS;
+SELECT * FROM TARJETA;
+
+SELECT DISTINCT tipo_tarjeta FROM TIPO_TARJETAS;
+
+--Contar cuántos productos hay por cada categoría
+SELECT * FROM CATEGORIAS;
+SELECT * FROM PRODUCTO_CATEGORIAS;
+SELECT * FROM PRODUCTO;
+
+SELECT c.nombre_categoria,COUNT (p.id) AS Cantidad_productos FROM CATEGORIAS c
+INNER JOIN PRODUCTO_CATEGORIAS pc ON c.id=pc.id_categoria
+INNER JOIN PRODUCTO p ON pc.id_producto= p.id
+GROUP BY c.nombre_categoria; 
+
+
+--Cree un bloque anónimo PL/SQL que: Obtenga la fecha de vencimiento de una tarjeta (TARJETA). Compare esa fecha con la fecha actual (SYSDATE). Muestre por pantalla: “Tarjeta vencida” si la fecha ya pasó. “Tarjeta por vencer” si vence dentro de los próximos 6 meses. “Tarjeta vigente” si vence después de 6 meses. Requisitos obligatorios: Usar IF / ELSIF / ELSE Usar DBMS_OUTPUT.PUT_LINE Usar variables locales
+
+DECLARE
+    v_estado_tarjeta VARCHAR2(50);
+    v_fecha_vencimiento DATE;
+
+BEGIN
+    SELECT v_fecha_vencimiento INTO v_fecha_vencimiento FROM TARJETA WHERE id=2;
+
+    IF v_fecha_vencimiento < SYSDATE THEN v_estado_tarjeta:='VENCIDA';
+        DBMS_OUTPUT.PUT_LINE('SU TARJETA SE ENCUENTA: '|| v_estado_tarjeta || ', por favor renuevela.');
+
+    ELSIF  v_fecha_vencimiento <= ADD_MONTHS (SYSDATE,6) THEN v_estado_tarjeta:='POR VENCER';
+
+        DBMS_OUTPUT.PUT_LINE('SU TARJETA SE ENCUENTA: '|| v_estado_tarjeta || ', por favor precaución.');
+    ELSE 
+        v_estado_tarjeta:='VIGENTE';
+        DBMS_OUTPUT.PUT_LINE('SU TARJETA SE ENCUENTA: '|| v_estado_tarjeta || ', puede realizar operaciones.'); 
+    END IF;
+
+END;    
+/
+
+--Cree un bloque PL/SQL que: Recorra los productos de un carrito (CARRITO_PRODUCTO). Cuente cuántos productos hay en total (sumando la cantidad). Muestre: El número del producto que se está procesando. El total acumulado al final del ciclo. Requisitos obligatorios:Usar FOR LOOP o WHILE LOOP Usar un contador Mostrar el resultado solo al final del loop
+SELECT * FROM CARRITO_PRODUCTO;
+
+DECLARE
+    v_contador number:=0;
+BEGIN
+    FOR p in (SELECT id_producto,cantidad FROM CARRITO_PRODUCTO)
+        LOOP 
+            v_contador := v_contador +1;
+            DBMS_OUTPUT.PUT_LINE('PRODUCTO ID:'|| p.id_producto || ' | CANTIDAD: ' || p.cantidad || ' | Procesado N°: '|| v_contador);
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Total de productos procesados: '||v_contador);
+        
+END;
+
+--Cree un bloque PL/SQL que: Defina un RECORD personalizado que contenga: Nombre del usuario Email Teléfono Región Comuna Obtenga los datos desde las tablas correspondientes. Muestre toda la información del usuario en una sola salida. Requisitos obligatorios: Usar TYPE ... IS RECORD Usar SELECT ... INTO Usar joins dentro del SELECT
+
+SELECT * FROM USUARIOS; SELECT * FROM COMUNA; SELECT * FROM REGION; SELECT * FROM USUARIOS_DOMICILIO; SELECT * FROM DOMICILIO; SELECT * FROM COMUNA; SELECT * FROM REGION; DESC COMUNA;
+
+DECLARE
+    TYPE t_usuario IS RECORD (
+        nombre   VARCHAR2(50),
+        email    VARCHAR2(100),
+        telefono VARCHAR2(15),
+        comuna   VARCHAR2(20),
+        region   VARCHAR2(20)
+    );
+
+    v_usuario t_usuario;
+BEGIN
+    SELECT u.nombre_usuario, u.email_usuario, u.telefono_usuario, c.nombre_comuna, r.nombre_region
+    INTO v_usuario.nombre, v_usuario.email, v_usuario.telefono, v_usuario.comuna, v_usuario.region
+    FROM USUARIOS u
+    JOIN USUARIOS_DOMICILIO ud ON u.id = ud.id_usuario
+    JOIN DOMICILIO d ON ud.id_direccion = d.id
+    JOIN COMUNA c ON d.id_comuna = c.id
+    JOIN REGION r ON c.id_region = r.id
+    WHERE u.id = 1 ;
+
+    DBMS_OUTPUT.PUT_LINE('USUARIO: '|| v_usuario.nombre ||
+    ' EMAIL '|| v_usuario.email ||
+    ' TELEFONO: '|| v_usuario.telefono || 
+    ' COMUNA: '|| v_usuario.comuna || 
+    ' REGION: '|| v_usuario.region);
+END;
+/
+
+--Cree un bloque PL/SQL que: Declare un VARRAY que almacene hasta 5 nombres de categorías. Cargue el arreglo con categorías existentes. Recorra el VARRAY y muestre cada categoría numerada. Requisitos obligatorios: Usar VARRAY Usar FOR LOOP Acceder a los elementos del arreglo con índice
+
+DECLARE
+    TYPE t_categorias IS VARRAY(5) OF CATEGORIAS.nombre_categoria%TYPE;
+    v_categorias t_categorias;
+    v_contador NUMBER := 0;
+BEGIN
+    v_categorias := t_categorias();
+    FOR c IN (SELECT nombre_categoria FROM CATEGORIAS ORDER BY id) LOOP
+        EXIT WHEN v_contador = 5;
+        v_contador := v_contador + 1;
+        v_categorias.EXTEND;
+        v_categorias(v_contador) := c.nombre_categoria;
+
+    END LOOP;
+
+    FOR i IN 1 .. v_categorias.COUNT LOOP
+        DBMS_OUTPUT.PUT_LINE(i || ' - ' || v_categorias(i));
+    END LOOP;
+END;
+/
+

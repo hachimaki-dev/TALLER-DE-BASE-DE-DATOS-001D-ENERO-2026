@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proyecto Base de Datos - Presentación</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fuente -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            padding: 80px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            animation: fade 0.6s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #00e5ff;
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 900px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        li {
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+        .diagram {
+            max-width: 90%;
+            max-height: 70vh;
+            margin-top: 30px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: #fff;
+            padding: 10px;
+        }
+        .code-image {
+            max-width: 95%;
+            max-height: 75vh;
+            margin-top: 25px;
+            border-radius: 14px;
+            background: #0f172a;
+            padding: 14px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .code-image:hover {
+            transform: scale(1.02);
+        }
+
+        .badge {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            background: #22d3ee;
+            color: #020617;
+            font-weight: bold;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1 -->
+<section class="slide active">
+    <h1>Sistema de Comercio Electrónico</h1>
+    <h2>Proyecto Base de Datos</h2>
+    <p>
+        Diseño, modelado e implementación de una base de datos relacional
+        utilizando SQL y PL/SQL.
+    </p>
+    <p>
+        Alumno: <strong>RAÚL ROA</strong><br>
+        Asignatura: TALLER DE BASE DE DATOS<br>
+        Modelo: MercadoLibre
+    </p>
+    <div class="footer">← → para navegar</div>
+</section>
+
+<!-- SLIDE 2 -->
+<section class="slide">
+    <h2>Contexto del Proyecto</h2>
+    <p>
+        El proyecto simula el funcionamiento del sistema de ecommerce de la base de datos de MercadoLibre,
+        donde se gestionan usuarios, productos, categorías, direcciones y pagos.
+    </p>
+    <ul>
+        <li>Gestión de usuarios y domicilios</li>
+        <li>Organización de productos por categorías</li>
+        <li>Carrito de compras</li>
+        <li>Pagos con tarjetas</li>
+    </ul>
+</section>
+
+<!-- SLIDE 3 -->
+<section class="slide">
+    <h2>Objetivos</h2>
+    <p><strong>Objetivo general:</strong></p>
+    <p>
+        Diseñar una base de datos normalizada y funcional que permita soportar
+        el sistema de comercio que utiliza MercadoLibre.
+    </p>
+
+    <p><strong>Objetivos específicos:</strong></p>
+    <ul>
+        <li>Aplicar normalización</li>
+        <li>Diseñar relaciones entre entidades</li>
+        <li>Implementar consultas SQL</li>
+        <li>Utilizar PL/SQL para lógica de negocio</li>
+    </ul>
+</section>
+
+<!-- SLIDE 4 -->
+<section class="slide">
+    <h2>Modelo Conceptual</h2>
+    <p>
+        El modelo conceptual representa las entidades principales del sistema
+        y cómo se relacionan entre sí.
+    </p>
+    <ul>
+        <li>Usuarios</li>
+        <li>Productos</li>
+        <li>Categorías</li>
+        <li>Carrito</li>
+        <li>Tarjetas</li>
+        <li>Domicilios</li>
+    </ul>
+    <p>
+        Este modelo permite entender el negocio antes de pasar a la implementación.
+    </p>
+</section>
+
+<section class="slide">
+    <h2>Modelo Conceptual</h2>
+    <p>
+        Este diagrama representa las entidades principales del sistema y
+        sus relaciones, permitiendo comprender el negocio antes de
+        implementar la base de datos.
+    </p>
+
+    <img src="img/modelo_conceptual.png" alt="Modelo Conceptual" class="diagram">
+</section>
+
+<!-- SLIDE 5 -->
+<section class="slide">
+    <h2>Modelo Lógico</h2>
+    <p>
+        En el modelo lógico se definen las tablas, claves primarias y foráneas.
+    </p>
+    <ul>
+        <li>Separación de datos para evitar redundancia</li>
+        <li>Uso de tablas intermedias para relaciones N:M</li>
+        <li>Integridad referencial</li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Modelo Lógico</h2>
+    <p>
+        En el modelo lógico se definen las tablas, claves primarias,
+        claves foráneas y relaciones entre tablas.
+    </p>
+
+    <img src="img/modelo_logico.png" alt="Modelo Lógico" class="diagram">
+</section>
+
+
+<!-- SLIDE 6 -->
+<section class="slide">
+    <h2>Normalización</h2>
+    <ul>
+        <li><strong>Primera Forma Normal (1FN):</strong> atributos atómicos</li>
+        <li><strong>Segunda Forma Normal (2FN):</strong> dependencia total</li>
+        <li><strong>Tercera Forma Normal (3FN):</strong> sin dependencias transitivas</li>
+    </ul>
+    <p>
+        Esto evita inconsistencias y problemas de actualización.
+    </p>
+</section>
+
+<!-- SLIDE 7 -->
+<section class="slide">
+    <h2>Consultas SQL</h2>
+    <p>
+        Se desarrollaron consultas para obtener información relevante del sistema:
+    </p>
+    <ul>
+        <li>Usuarios con sus domicilios</li>
+        <li>Productos por categoría</li>
+        <li>Contenido del carrito</li>
+        <li>Validaciones de datos</li>
+    </ul>
+</section>
+<section class="slide">
+    <h2>Consulta SQL 1</h2>
+    <span class="badge">SELECT / INNER JOIN / ORDER BY / WHERE </span>
+
+    <img src="img/CONSULTA_1.png" alt="Consulta 1" class="code-image">
+</section>
+<section class="slide">
+    <h2>Consulta SQL 2</h2>
+    <span class="badge">SELECT/ INNER JOIN / WHERE</span>
+
+    <img src="img/CONSULTA_2.png" alt="Consulta 2" class="code-image">
+</section>
+<section class="slide">
+    <h2>Consulta SQL 3</h2>
+    <span class="badge">SELECT/ WHERE / BETWEEN</span>
+
+    <img src="img/CONSULTA_3.png" alt="Consulta 3" class="code-image">
+</section>
+<section class="slide">
+    <h2>Consulta SQL 4</h2>
+    <span class="badge">SELECT/ DISTINCT / INNER JOIN</span>
+
+    <img src="img/CONSULTA_4.png" alt="Consulta 4" class="code-image">
+</section>
+<section class="slide">
+    <h2>Consulta SQL 5</h2>
+    <span class="badge"> SELECT/ DISTINCT</span>
+
+    <img src="img/CONSULTA_5.png" alt="Consulta 5" class="code-image">
+</section>
+<section class="slide">
+    <h2>Consulta SQL 6</h2>
+    <span class="badge">SELECT/ COUNT/ INNER JOIN/ GROUP BY</span>
+
+    <img src="img/CONSULTA_6.png" alt="Consulta 6" class="code-image">
+</section>
+<!-- SLIDE 8 -->
+<section class="slide">
+    <h2>Uso de PL/SQL</h2>
+    <p>
+        PL/SQL permite implementar lógica que no puede resolverse solo con SQL.
+    </p>
+    <ul>
+        <li>IF / ELSE para validaciones</li>
+        <li>LOOP para recorrer datos</li>
+        <li>RECORD para manejar información estructurada</li>
+        <li>VARRAY para almacenar listas en memoria</li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Bloque PL/SQL 1</h2>
+    <span class="badge">IF</span>
+
+    <img src="img/PL_SQL_1.png" alt="PLSQL 1" class="code-image">
+</section>
+<section class="slide">
+    <h2>Bloque PL/SQL 2</h2>
+    <span class="badge">LOOP/ FOR</span>
+
+    <img src="img/PL_SQL_2.png" alt="PLSQL 2" class="code-image">
+</section>
+
+<!-- SLIDE RECORD -->
+<section class="slide">
+    <h2>Ejemplo: RECORD</h2>
+    <p>
+        El <strong>RECORD</strong> se utiliza para almacenar distintos datos relacionados
+        en una sola estructura, similar a una fila de una tabla.
+    </p>
+    <ul>
+        <li>Permite agrupar múltiples campos (nombre, email, región, etc.)</li>
+        <li>Se define usando <code>TYPE ... IS RECORD</code></li>
+        <li>Se accede a cada campo con notación punto (<code>registro.campo</code>)</li>
+        <li>Ideal para manejar resultados de <code>SELECT ... INTO</code></li>
+    </ul>
+</section>
+
+
+<!-- SLIDE VARRAY -->
+<section class="slide">
+    <h2>Ejemplo: VARRAY</h2>
+    <p>
+        El VARRAY se utiliza para almacenar un conjunto limitado de valores,
+        como una lista de categorías.
+    </p>
+    <ul>
+        <li><code>.EXTEND</code> reserva espacio</li>
+        <li>Índices comienzan en 1</li>
+        <li>Datos se manejan en memoria</li>
+    </ul>
+</section>
+<!-- SLIDE 10 -->
+<section class="slide">
+    <h2>Conclusiones</h2>
+    <ul>
+        <li>Diseño correcto de base de datos es clave</li>
+        <li>La normalización mejora la consistencia</li>
+        <li>PL/SQL permite automatizar reglas del negocio</li>
+        <li>El sistema es escalable y realista</li>
+    </ul>
+</section>
+
+<!-- SLIDE 11 -->
+<section class="slide">
+    <h1>Gracias</h1>
+    <h2>¿Preguntas?</h2>
+</section>
+
+<script>
+    let slides = document.querySelectorAll('.slide');
+    let index = 0;
+
+    function showSlide(i) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[i].classList.add('active');
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' && index < slides.length - 1) {
+            index++;
+            showSlide(index);
+        }
+        if (e.key === 'ArrowLeft' && index > 0) {
+            index--;
+            showSlide(index);
+        }
+    });
+</script>
+
+</body>
+</html>
