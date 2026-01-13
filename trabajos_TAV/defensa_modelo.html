@@ -152,60 +152,16 @@
     <div class="slide">
         <h2>1.1 Modelo Conceptual</h2>
         <p>Vista de alto nivel que muestra las entidades principales y cómo interactúan las reglas de negocio (sin detalles de atributos).</p>
+        <a href="./Logical.html">modelo conceltual</a>
         
-        <div class="mermaid-wrapper">
-            <div class="mermaid">
-            erDiagram
-                USUARIO ||--o{ SUSCRIPCION : adquiere
-                SUSCRIPCION }|--|| PLAN : define_beneficios
-                USUARIO ||--o{ PERFIL : gestiona_multiples
-                USUARIO ||--o{ PAGO : genera
-                
-                PERFIL }|--|{ CONTENIDO : visualiza_y_marca
-                CONTENIDO }|--|| ESTUDIO : producido_por
-                CONTENIDO }|--|{ TEMPORADA : se_divide_en
-                TEMPORADA }|--|{ EPISODIO : contiene
-                
-                CONTENIDO }o--o{ GENERO : clasificado
-                CONTENIDO }o--o{ TAG : etiquetado
-                CONTENIDO }o--o{ REGION : restriccion_geo
-            </div>
-        </div>
     </div>
 
     <div class="slide">
         <h2>1.2 Modelo Lógico Normalizado (3FN)</h2>
         <p>Modelo detallado con claves foráneas, tipos de datos y tablas intermedias para romper relaciones Muchos-a-Muchos.</p>
+        <a href="./Relational_1.html">modelo relacional</a>
+           
         
-        <div class="mermaid-wrapper">
-            <div class="mermaid">
-            erDiagram
-                USUARIOS ||--o{ SUSCRIPCIONES : FK_usuario
-                PLANES_SUSCRIPCION ||--o{ SUSCRIPCIONES : FK_plan
-                SUSCRIPCIONES ||--o{ PAGOS : FK_suscripcion
-                USUARIOS ||--o{ PERFILES : FK_usuario
-                
-                PERFILES ||--o{ HISTORIALES : registra
-                CONTENIDOS ||--o{ HISTORIALES : visto
-                EPISODIOS ||--o{ HISTORIALES : detalle
-                
-                CONTENIDOS ||--o{ TEMPORADAS : FK_contenido
-                TEMPORADAS ||--o{ EPISODIOS : FK_temporada
-                
-                CONTENIDOS }|--|| STUDIOS : FK_studio_principal
-                CONTENIDOS }|--|| EDADES : clasificacion
-                
-                CONTENIDO_GENEROS }|--|| CONTENIDOS : FK
-                CONTENIDO_GENEROS }|--|| GENEROS : FK
-                
-                CONTENIDO_TAGS }|--|| CONTENIDOS : FK
-                CONTENIDO_TAGS }|--|| TAGS : FK
-                
-                CONTENIDO_STUDIOS }|--|| CONTENIDOS : FK
-                CONTENIDO_STUDIOS }|--|| STUDIOS : FK
-            </div>
-        </div>
-        <p style="font-size: 0.8rem; text-align:center;">(Se muestran las relaciones clave para legibilidad)</p>
     </div>
 
     <div class="slide">
@@ -252,11 +208,12 @@ ORDER BY nombre_studio;</pre>
             <div>
                 <h3>Promedio Duración (AVG)</h3>
                 <pre>
-SELECT id_contenido,
-COUNT(id) as "Cantidad de episodios",
-ROUND(AVG(duracion_episodio), 2) as "Duracion promedio"
-FROM EPISODIOS
-GROUP BY id_contenido 
+SELECT c.titulo_contenido,
+COUNT(e.id) as "Cantidad de episodios",
+ROUND(AVG(e.duracion_episodio), 2) as "Duracion promedio"
+FROM EPISODIOS e
+JOIN CONTENIDOS c ON e.ID_CONTENIDO = c.id
+GROUP BY c.titulo_contenido
 ORDER BY "Cantidad de episodios" DESC;</pre>
             </div>
         </div>
@@ -267,27 +224,40 @@ ORDER BY "Cantidad de episodios" DESC;</pre>
         <h3>Clasificación de Planes</h3>
         <pre>
 DECLARE
+
     v_nombre_plan  PLANES_SUSCRIPCION.NOMBRE_PLAN%TYPE;
     v_bloqueo_ads  PLANES_SUSCRIPCION.BLOQUEO_ADS%TYPE;
     v_descarga     PLANES_SUSCRIPCION.DESCARGA_OFFLINE%TYPE;
     v_precio       PLANES_SUSCRIPCION.PRECIO_PLAN%TYPE;
     v_clasificacion VARCHAR2(50);
+
 BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- Tipos de planes y su clasificacion ---');
     SELECT nombre_plan, bloqueo_ads, descarga_offline, precio_plan
     INTO v_nombre_plan, v_bloqueo_ads, v_descarga, v_precio
-    FROM PLANES_SUSCRIPCION WHERE id = 3;
+    FROM PLANES_SUSCRIPCION
+    WHERE id = 3;
 
     IF v_bloqueo_ads = 'S' AND v_descarga = 'S' THEN
         v_clasificacion := 'Premium (COMPLETO)';
+
     ELSIF v_bloqueo_ads = 'S' OR v_descarga = 'S' THEN
         v_clasificacion := 'Estandar (BALANCEADO)';
+
     ELSE
         v_clasificacion := 'Basico (LIMITADO)';
+
+
     END IF;
 
-    DBMS_OUTPUT.PUT_LINE('Plan: ' || v_nombre_plan || ' - ' || v_clasificacion);
+    DBMS_OUTPUT.PUT_LINE('Plan: ' || v_nombre_plan);
+    DBMS_OUTPUT.PUT_LINE('Costo: $' || v_precio);
+    DBMS_OUTPUT.PUT_LINE('Clasificación: ' || v_clasificacion);
+
+
 END;
-/</pre>
+/
+</pre>
     </div>
 
     <div class="slide">
@@ -372,13 +342,7 @@ END;
 </div>
 
 <script>
-    // Configuración Inicial de Mermaid
-    mermaid.initialize({ 
-        startOnLoad: true, 
-        theme: 'dark',
-        securityLevel: 'loose'
-    });
-
+    
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
     const indicator = document.getElementById('pageIndicator');

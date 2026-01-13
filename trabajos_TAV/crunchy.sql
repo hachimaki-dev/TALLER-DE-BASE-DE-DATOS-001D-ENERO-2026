@@ -1,38 +1,28 @@
---drop tablas usuario
-DROP TABLE USUARIOS CASCADE CONSTRAINTS;
-DROP TABLE PLANES_SUSCRIPCION CASCADE CONSTRAINTS;
-DROP TABLE SUSCRIPCIONES CASCADE CONSTRAINTS;
-DROP TABLE PAGOS CASCADE CONSTRAINTS;
-DROP TABLE PERFILES CASCADE CONSTRAINTS;
-
---drop tablas categorias
-DROP TABLE TIPO_CONTENIDOS CASCADE CONSTRAINTS;
-DROP TABLE DEMOGRAFIAS CASCADE CONSTRAINTS;
-DROP TABLE EDADES CASCADE CONSTRAINTS;
-DROP TABLE GENEROS CASCADE CONSTRAINTS;
-DROP TABLE TAGS CASCADE CONSTRAINTS;
-DROP TABLE REGIONES CASCADE CONSTRAINTS;
-DROP TABLE STUDIOS CASCADE CONSTRAINTS;
-
---drop tablas clasificacion
-DROP TABLE CONTENIDOS CASCADE CONSTRAINTS;
-DROP TABLE CONTENIDO_STUDIOS CASCADE CONSTRAINTS;
-DROP TABLE CONTENIDO_GENEROS CASCADE CONSTRAINTS;
-DROP TABLE CONTENIDO_TAGS CASCADE CONSTRAINTS;
-DROP TABLE CONTENIDO_REGIONES CASCADE CONSTRAINTS;
-
---drop tablas episodios
-DROP TABLE TEMPORADAS CASCADE CONSTRAINTS;
-DROP TABLE EPISODIOS CASCADE CONSTRAINTS;
-DROP TABLE SUBTITULOS CASCADE CONSTRAINTS;
-
---drop tablas interacciones
-DROP TABLE FAVORITOS CASCADE CONSTRAINTS;
+-- Drop tablas usuario
 DROP TABLE HISTORIALES CASCADE CONSTRAINTS;
+DROP TABLE FAVORITOS CASCADE CONSTRAINTS;
+DROP TABLE SUBTITULOS CASCADE CONSTRAINTS;
+DROP TABLE EPISODIOS CASCADE CONSTRAINTS;
+DROP TABLE TEMPORADAS CASCADE CONSTRAINTS;
+DROP TABLE CONTENIDO_REGIONES CASCADE CONSTRAINTS;
+DROP TABLE CONTENIDO_TAGS CASCADE CONSTRAINTS;
+DROP TABLE CONTENIDO_GENEROS CASCADE CONSTRAINTS;
+DROP TABLE CONTENIDO_STUDIOS CASCADE CONSTRAINTS;
+DROP TABLE CONTENIDOS CASCADE CONSTRAINTS;
+DROP TABLE STUDIOS CASCADE CONSTRAINTS;
+DROP TABLE REGIONES CASCADE CONSTRAINTS;
+DROP TABLE TAGS CASCADE CONSTRAINTS;
+DROP TABLE GENEROS CASCADE CONSTRAINTS;
+DROP TABLE EDADES CASCADE CONSTRAINTS;
+DROP TABLE DEMOGRAFIAS CASCADE CONSTRAINTS;
+DROP TABLE TIPO_CONTENIDOS CASCADE CONSTRAINTS;
+DROP TABLE PERFILES CASCADE CONSTRAINTS;
+DROP TABLE PAGOS CASCADE CONSTRAINTS;
+DROP TABLE SUSCRIPCIONES CASCADE CONSTRAINTS;
+DROP TABLE PLANES_SUSCRIPCION CASCADE CONSTRAINTS;
+DROP TABLE USUARIOS CASCADE CONSTRAINTS;
 
-
-
---TABLAS RELACIONADAS CON USUARIO
+-- TABLAS RELACIONADAS CON USUARIO
 CREATE TABLE USUARIOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     email_usuario VARCHAR2(100) UNIQUE NOT NULL,
@@ -40,7 +30,7 @@ CREATE TABLE USUARIOS(
     nombre_usuario VARCHAR2(100) NOT NULL,
     fecha_nacimiento DATE NOT NULL,
     fecha_registro TIMESTAMP DEFAULT SYSTIMESTAMP,
-    usuario_activo BOOLEAN DEFAULT TRUE
+    usuario_activo CHAR(1) DEFAULT 'S' CHECK (usuario_activo IN ('S', 'N'))
 );
 
 CREATE TABLE PLANES_SUSCRIPCION(
@@ -48,8 +38,8 @@ CREATE TABLE PLANES_SUSCRIPCION(
     nombre_plan VARCHAR2(100) NOT NULL,
     precio_plan NUMBER NOT NULL,
     dispositivos NUMBER NOT NULL,
-    bloqueo_ads BOOLEAN DEFAULT FALSE,
-    descarga_offline BOOLEAN DEFAULT FALSE,
+    bloqueo_ads CHAR(1) DEFAULT 'N' CHECK (bloqueo_ads IN ('S', 'N')),
+    descarga_offline CHAR(1) DEFAULT 'N' CHECK (descarga_offline IN ('S', 'N')),
     descripcion_plan CLOB
 );
 
@@ -59,9 +49,8 @@ CREATE TABLE SUSCRIPCIONES(
     id_plan NUMBER REFERENCES PLANES_SUSCRIPCION(id) NOT NULL,
     fecha_inicio TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     fecha_termino DATE NOT NULL,
-    estado VARCHAR2(20) DEFAULT 'activo' NOT NULL ,
-    renovacion_automatica BOOLEAN DEFAULT TRUE
-
+    estado VARCHAR2(20) DEFAULT 'activo' NOT NULL,
+    renovacion_automatica CHAR(1) DEFAULT 'S' CHECK (renovacion_automatica IN ('S', 'N'))
 );
 
 CREATE TABLE PAGOS(
@@ -71,19 +60,19 @@ CREATE TABLE PAGOS(
     monto NUMBER NOT NULL,
     fecha_pago TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     metodo_pago VARCHAR2(50) NOT NULL,
-    estado VARCHAR2(20) DEFAULT 'completado' NOT NULL ,
+    estado VARCHAR2(20) DEFAULT 'completado' NOT NULL,
     id_transaccion VARCHAR2(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE PERFILES(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_usuario NUMBER REFERENCES USUARIOS(id) NOT NULL,
-    numbre_perfil VARCHAR2(100) NOT NULL,
+    nombre_perfil VARCHAR2(100) NOT NULL,
     avatar_url VARCHAR2(500) NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
 );
 
---TABLAS DE CLASIFICACIONES
+-- TABLAS DE CLASIFICACIONES
 
 CREATE TABLE TIPO_CONTENIDOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -100,7 +89,6 @@ CREATE TABLE EDADES(
     pg VARCHAR2(10) UNIQUE NOT NULL, -- EJEMPLO PG-13, PG-6, R
     descripcion CLOB NOT NULL,
     min_edad NUMBER NOT NULL
-
 );
 
 CREATE TABLE GENEROS(
@@ -110,23 +98,22 @@ CREATE TABLE GENEROS(
 
 CREATE TABLE TAGS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre_tags VARCHAR2(50) UNIQUE NOT NULL
+    nombre_tag VARCHAR2(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE REGIONES(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    codigo_region VARCHAR2(3) UNIQUE NOT NULL, --ejemplo US, JP, MX
+    codigo_region VARCHAR2(3) UNIQUE NOT NULL, -- ejemplo US, JP, MX
     nombre_region VARCHAR2(100) NOT NULL
 );
 
 CREATE TABLE STUDIOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nombre_studio VARCHAR2(100) UNIQUE NOT NULL,
-    pais NUMBER REFERENCES REGIONES(id) UNIQUE NOT NULL,
-    descipcion_studio CLOB NOT NULL,
+    pais NUMBER REFERENCES REGIONES(id) NOT NULL,
+    descripcion_studio CLOB NOT NULL,
     fecha_fundacion DATE NOT NULL,
-    url_studio VARCHAR(500) UNIQUE NOT NULL
-
+    url_studio VARCHAR2(500) UNIQUE NOT NULL
 );
 
 -- TABLAS RELACIONADAS CON CONTENIDOS
@@ -134,22 +121,23 @@ CREATE TABLE STUDIOS(
 CREATE TABLE CONTENIDOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_tipo NUMBER REFERENCES TIPO_CONTENIDOS(id) NOT NULL,
-    titulo_contenido VARCHAR(200) UNIQUE NOT NULL,
-    titulo_original VARCHAR(200) UNIQUE NOT NULL,
+    titulo_contenido VARCHAR2(200) UNIQUE NOT NULL,
+    titulo_original VARCHAR2(200) UNIQUE NOT NULL,
     fecha_salida DATE NOT NULL,
     id_demografia NUMBER REFERENCES DEMOGRAFIAS(id) NOT NULL,
     id_studio NUMBER REFERENCES STUDIOS(id) NOT NULL,
+    id_edad NUMBER REFERENCES EDADES(id) NOT NULL,
     poster_url VARCHAR2(500) NOT NULL,
     banner_url VARCHAR2(500) NOT NULL,
     trailer_url VARCHAR2(500) NOT NULL,
-    estado VARCHAR(50) DEFAULT 'en emision' NOT NULL  --EJEMPLO EN EMISION, TERMINADO
+    estado VARCHAR2(50) DEFAULT 'en emision' NOT NULL -- EJEMPLO EN EMISION, TERMINADO
 );
 
 CREATE TABLE CONTENIDO_STUDIOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_contenido NUMBER REFERENCES CONTENIDOS(id) NOT NULL,
     id_studio NUMBER REFERENCES STUDIOS(id) NOT NULL,
-    rol VARCHAR2(100) NOT NULL --EJEMPLO PRODUCCION, CO-PRODUCCION
+    rol VARCHAR2(100) NOT NULL -- EJEMPLO PRODUCCION, CO-PRODUCCION
 );
 
 CREATE TABLE CONTENIDO_GENEROS(
@@ -168,8 +156,7 @@ CREATE TABLE CONTENIDO_REGIONES(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_contenido NUMBER REFERENCES CONTENIDOS(id) NOT NULL,
     id_region NUMBER REFERENCES REGIONES(id) NOT NULL,
-    disponible BOOLEAN DEFAULT TRUE -- TRUE= dispoble, FALSE= bloqueado
-
+    disponible CHAR(1) DEFAULT 'S' CHECK (disponible IN ('S', 'N'))
 );
 
 -- TABLAS RELACIONADAS A LOS EPISODIOS
@@ -180,7 +167,7 @@ CREATE TABLE TEMPORADAS(
     num_temporada NUMBER NOT NULL,
     nombre_temporada VARCHAR2(500) NOT NULL,
     fecha_inicio DATE NOT NULL,
-    total_episodio NUMBER
+    total_episodios NUMBER
 );
 
 CREATE TABLE EPISODIOS(
@@ -188,7 +175,7 @@ CREATE TABLE EPISODIOS(
     id_contenido NUMBER REFERENCES CONTENIDOS(id) NOT NULL,
     id_temporada NUMBER REFERENCES TEMPORADAS(id),
     num_episodio NUMBER NOT NULL,
-    nombre_episodio VARCHAR(100) UNIQUE NOT NULL,
+    nombre_episodio VARCHAR2(100) UNIQUE NOT NULL,
     descripcion_episodio CLOB NOT NULL,
     duracion_episodio NUMBER NOT NULL,
     video_url VARCHAR2(500) UNIQUE NOT NULL,
@@ -199,12 +186,12 @@ CREATE TABLE EPISODIOS(
 CREATE TABLE SUBTITULOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_episodio NUMBER REFERENCES EPISODIOS(id) NOT NULL,
-    codigo_sub VARCHAR(10) UNIQUE NOT NULL,
-    nombre_sub VARCHAR(100) UNIQUE NOT NULL,
-    sub_url VARCHAR(500) UNIQUE NOT NULL
+    codigo_sub VARCHAR2(10) UNIQUE NOT NULL,
+    nombre_sub VARCHAR2(100) UNIQUE NOT NULL,
+    sub_url VARCHAR2(500) UNIQUE NOT NULL
 );
 
---TABLAS INTERACCION CON USUARIOS
+-- TABLAS INTERACCION CON USUARIOS
 
 CREATE TABLE FAVORITOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -218,18 +205,8 @@ CREATE TABLE HISTORIALES(
     id_perfil NUMBER REFERENCES PERFILES(id) NOT NULL,
     id_contenido NUMBER REFERENCES CONTENIDOS(id) NOT NULL,
     fecha_historial TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
-<<<<<<< Updated upstream
-    completado BOOLEAN DEFAULT FALSE
-);
-
-
-
-
-
-=======
     completado CHAR(1) DEFAULT 'N' CHECK (completado IN ('S', 'N'))
 );
-
 -- =============================================
 -- 1. TABLAS MAESTRAS (CATÁLOGOS)
 -- =============================================
@@ -435,26 +412,26 @@ INSERT INTO PERFILES (id_usuario, nombre_perfil, avatar_url) VALUES (20, 'Luffy_
 
 -- CONTENIDOS (20 Animes populares)
 -- Asumo IDs: Tipo 1=Serie, 2=Peli. Demo 1=Shonen, 2=Seinen. Studios 1-20.
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Jujutsu Kaisen', 'Jujutsu Kaisen', TO_DATE('2020-10-03','YYYY-MM-DD'), 1, 1, '/posters/jjk.jpg', '/banners/jjk.jpg', '/trailers/jjk.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'One Piece', 'One Piece', TO_DATE('1999-10-20','YYYY-MM-DD'), 1, 2, '/posters/op.jpg', '/banners/op.jpg', '/trailers/op.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Death Note', 'Desu Noto', TO_DATE('2006-10-04','YYYY-MM-DD'), 1, 3, '/posters/dn.jpg', '/banners/dn.jpg', '/trailers/dn.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'My Hero Academia', 'Boku no Hero Academia', TO_DATE('2016-04-03','YYYY-MM-DD'), 1, 4, '/posters/mha.jpg', '/banners/mha.jpg', '/trailers/mha.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Violet Evergarden', 'Violet Evergarden', TO_DATE('2018-01-11','YYYY-MM-DD'), 2, 5, '/posters/ve.jpg', '/banners/ve.jpg', '/trailers/ve.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Attack on Titan', 'Shingeki no Kyojin', TO_DATE('2013-04-07','YYYY-MM-DD'), 1, 6, '/posters/aot.jpg', '/banners/aot.jpg', '/trailers/aot.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Code Geass', 'Code Geass: Hangyaku no Lelouch', TO_DATE('2006-10-06','YYYY-MM-DD'), 2, 7, '/posters/cg.jpg', '/banners/cg.jpg', '/trailers/cg.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Demon Slayer', 'Kimetsu no Yaiba', TO_DATE('2019-04-06','YYYY-MM-DD'), 1, 8, '/posters/ds.jpg', '/banners/ds.jpg', '/trailers/ds.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Sword Art Online', 'Sword Art Online', TO_DATE('2012-07-08','YYYY-MM-DD'), 1, 9, '/posters/sao.jpg', '/banners/sao.jpg', '/trailers/sao.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Naruto', 'Naruto', TO_DATE('2002-10-03','YYYY-MM-DD'), 1, 10, '/posters/naruto.jpg', '/banners/naruto.jpg', '/trailers/naruto.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (2, 'Ghost in the Shell', 'Kokaku Kidotai', TO_DATE('1995-11-18','YYYY-MM-DD'), 2, 11, '/posters/gits.jpg', '/banners/gits.jpg', '/trailers/gits.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Toradora!', 'Toradora!', TO_DATE('2008-10-02','YYYY-MM-DD'), 3, 12, '/posters/toradora.jpg', '/banners/toradora.jpg', '/trailers/toradora.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Kill la Kill', 'Kill la Kill', TO_DATE('2013-10-04','YYYY-MM-DD'), 2, 13, '/posters/klk.jpg', '/banners/klk.jpg', '/trailers/klk.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Bakemonogatari', 'Bakemonogatari', TO_DATE('2009-07-03','YYYY-MM-DD'), 2, 14, '/posters/bake.jpg', '/banners/bake.jpg', '/trailers/bake.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (2, 'Your Name', 'Kimi no Na wa', TO_DATE('2016-08-26','YYYY-MM-DD'), 1, 15, '/posters/yn.jpg', '/banners/yn.jpg', '/trailers/yn.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (2, 'El Viaje de Chihiro', 'Sen to Chihiro no Kamikakushi', TO_DATE('2001-07-20','YYYY-MM-DD'), 5, 16, '/posters/chihiro.jpg', '/banners/chihiro.jpg', '/trailers/chihiro.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Dr. Stone', 'Dr. Stone', TO_DATE('2019-07-05','YYYY-MM-DD'), 1, 17, '/posters/drstone.jpg', '/banners/drstone.jpg', '/trailers/drstone.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Re:Zero', 'Re:Zero kara Hajimeru Isekai Seikatsu', TO_DATE('2016-04-04','YYYY-MM-DD'), 2, 18, '/posters/rezero.jpg', '/banners/rezero.jpg', '/trailers/rezero.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Jojos Bizarre Adventure', 'JoJo no Kimyou na Bouken', TO_DATE('2012-10-06','YYYY-MM-DD'), 1, 19, '/posters/jojo.jpg', '/banners/jojo.jpg', '/trailers/jojo.mp4');
-INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio, poster_url, banner_url, trailer_url) VALUES (1, 'Spy x Family', 'Spy x Family', TO_DATE('2022-04-09','YYYY-MM-DD'), 1, 20, '/posters/sxf.jpg', '/banners/sxf.jpg', '/trailers/sxf.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Jujutsu Kaisen', 'Jujutsu Kaisen', TO_DATE('2020-10-03','YYYY-MM-DD'), 1, 1,4, '/posters/jjk.jpg', '/banners/jjk.jpg', '/trailers/jjk.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'One Piece', 'One Piece', TO_DATE('1999-10-20','YYYY-MM-DD'), 1, 2,3, '/posters/op.jpg', '/banners/op.jpg', '/trailers/op.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Death Note', 'Desu Noto', TO_DATE('2006-10-04','YYYY-MM-DD'), 1, 3,3, '/posters/dn.jpg', '/banners/dn.jpg', '/trailers/dn.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'My Hero Academia', 'Boku no Hero Academia', TO_DATE('2016-04-03','YYYY-MM-DD'), 1, 4,3, '/posters/mha.jpg', '/banners/mha.jpg', '/trailers/mha.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Violet Evergarden', 'Violet Evergarden', TO_DATE('2018-01-11','YYYY-MM-DD'), 2, 5,3, '/posters/ve.jpg', '/banners/ve.jpg', '/trailers/ve.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Attack on Titan', 'Shingeki no Kyojin', TO_DATE('2013-04-07','YYYY-MM-DD'), 1, 6,3, '/posters/aot.jpg', '/banners/aot.jpg', '/trailers/aot.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Code Geass', 'Code Geass: Hangyaku no Lelouch', TO_DATE('2006-10-06','YYYY-MM-DD'), 2, 7,3, '/posters/cg.jpg', '/banners/cg.jpg', '/trailers/cg.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Demon Slayer', 'Kimetsu no Yaiba', TO_DATE('2019-04-06','YYYY-MM-DD'), 1, 8,4, '/posters/ds.jpg', '/banners/ds.jpg', '/trailers/ds.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Sword Art Online', 'Sword Art Online', TO_DATE('2012-07-08','YYYY-MM-DD'), 1, 9,3, '/posters/sao.jpg', '/banners/sao.jpg', '/trailers/sao.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Naruto', 'Naruto', TO_DATE('2002-10-03','YYYY-MM-DD'), 1, 10,2, '/posters/naruto.jpg', '/banners/naruto.jpg', '/trailers/naruto.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (2, 'Ghost in the Shell', 'Kokaku Kidotai', TO_DATE('1995-11-18','YYYY-MM-DD'), 2, 11,4, '/posters/gits.jpg', '/banners/gits.jpg', '/trailers/gits.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Toradora!', 'Toradora!', TO_DATE('2008-10-02','YYYY-MM-DD'), 3, 12,2, '/posters/toradora.jpg', '/banners/toradora.jpg', '/trailers/toradora.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Kill la Kill', 'Kill la Kill', TO_DATE('2013-10-04','YYYY-MM-DD'), 2, 13,4, '/posters/klk.jpg', '/banners/klk.jpg', '/trailers/klk.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Bakemonogatari', 'Bakemonogatari', TO_DATE('2009-07-03','YYYY-MM-DD'), 2, 14,4, '/posters/bake.jpg', '/banners/bake.jpg', '/trailers/bake.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (2, 'Your Name', 'Kimi no Na wa', TO_DATE('2016-08-26','YYYY-MM-DD'), 1, 15,2, '/posters/yn.jpg', '/banners/yn.jpg', '/trailers/yn.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (2, 'El Viaje de Chihiro', 'Sen to Chihiro no Kamikakushi', TO_DATE('2001-07-20','YYYY-MM-DD'), 5, 16,1, '/posters/chihiro.jpg', '/banners/chihiro.jpg', '/trailers/chihiro.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Dr. Stone', 'Dr. Stone', TO_DATE('2019-07-05','YYYY-MM-DD'), 1, 17,3, '/posters/drstone.jpg', '/banners/drstone.jpg', '/trailers/drstone.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Re:Zero', 'Re:Zero kara Hajimeru Isekai Seikatsu', TO_DATE('2016-04-04','YYYY-MM-DD'), 2, 18,4, '/posters/rezero.jpg', '/banners/rezero.jpg', '/trailers/rezero.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Jojos Bizarre Adventure', 'JoJo no Kimyou na Bouken', TO_DATE('2012-10-06','YYYY-MM-DD'), 1, 19,4, '/posters/jojo.jpg', '/banners/jojo.jpg', '/trailers/jojo.mp4');
+INSERT INTO CONTENIDOS (id_tipo, titulo_contenido, titulo_original, fecha_salida, id_demografia, id_studio,id_edad, poster_url, banner_url, trailer_url) VALUES (1, 'Spy x Family', 'Spy x Family', TO_DATE('2022-04-09','YYYY-MM-DD'), 1, 20,1, '/posters/sxf.jpg', '/banners/sxf.jpg', '/trailers/sxf.mp4');
 
 -- CONTENIDO_STUDIOS (20 Relaciones)
 INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (1, 1, 'Producción Principal');
@@ -476,8 +453,7 @@ INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (16, 16, 'Pr
 INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (17, 17, 'Producción Principal');
 INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (18, 18, 'Producción Principal');
 INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (19, 19, 'Producción Principal');
-INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (20, 20, 'Producción Principal');
--- 1. Mappa (ID 1) ayudando en Attack on Titan (ID 6) (Históricamente correcto, hicieron la temporada final)
+INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) VALUES (20,20, 'hicieron la temporada final');
 INSERT INTO CONTENIDO_STUDIOS (id_contenido, id_studio, rol) 
 VALUES (6, 1, 'Producción Temporada Final');
 
@@ -513,6 +489,7 @@ INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (8, 1);
 INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (9, 12);
 INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (10, 1);
 INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (11, 12);
+-- 1. Mappa (ID 1) ayudando en Attack on Titan (ID 6) (Históricamente 
 INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (12, 11);
 INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (13, 1);
 INSERT INTO CONTENIDO_GENEROS (id_contenido, id_genero) VALUES (14, 7);
@@ -686,4 +663,3 @@ INSERT INTO HISTORIALES (id_perfil, id_contenido, completado) VALUES (19, 2, 'S'
 INSERT INTO HISTORIALES (id_perfil, id_contenido, completado) VALUES (20, 1, 'N');
 
 COMMIT;
->>>>>>> Stashed changes

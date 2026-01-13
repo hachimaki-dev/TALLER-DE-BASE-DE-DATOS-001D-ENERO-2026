@@ -26,11 +26,12 @@ ORDER BY nombre_studio;
 
 --SCRIPT 4: PROMEDIO DE DURACION DE EPISODIOS
 
-SELECT id_contenido,
-COUNT(id) as "Cantidad de episodios",
-ROUND(AVG(duracion_episodio), 2) as "Duracion promedio"
-FROM EPISODIOS
-GROUP BY id_contenido 
+SELECT c.titulo_contenido,
+COUNT(e.id) as "Cantidad de episodios",
+ROUND(AVG(e.duracion_episodio), 2) as "Duracion promedio"
+FROM EPISODIOS e
+JOIN CONTENIDOS c ON e.ID_CONTENIDO = c.id
+GROUP BY c.titulo_contenido
 ORDER BY "Cantidad de episodios" DESC;
 
 --SCRIPT 5: DAR UN ESTADO A LOS PLANES DE SUSCRIPCION
@@ -44,7 +45,7 @@ DECLARE
     v_clasificacion VARCHAR2(50);
 
 BEGIN
-
+    DBMS_OUTPUT.PUT_LINE('--- Tipos de planes y su clasificacion ---');
     SELECT nombre_plan, bloqueo_ads, descarga_offline, precio_plan
     INTO v_nombre_plan, v_bloqueo_ads, v_descarga, v_precio
     FROM PLANES_SUSCRIPCION
