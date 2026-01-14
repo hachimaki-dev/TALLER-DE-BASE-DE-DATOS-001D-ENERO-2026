@@ -1,6 +1,6 @@
-# PL/SQL: Mega guía paso a paso (Oracle 19c)
+# Guía de PL/SQL (Oracle 19c)
 
-> **Objetivo**: Enseñar PL/SQL a un estudiante que conoce `SELECT * FROM` y poco más de SQL. Llegaremos hasta los tipos compuestos `VARRAY` y `RECORD`, pasando por variables, tipos de datos, control de flujo, cursores, DML dentro de bloques PL/SQL, manejo de errores y buenas prácticas.
+> **Objetivo**: Enseñar conceptos fundamentales de PL/SQL para el manejo de datos.
 
 ---
 

@@ -1,7 +1,7 @@
 # Evaluación Semana 2: Defensa de Modelo y Lógica de Negocio PL/SQL
 
 ## Descripción de la Actividad
-En esta evaluación, los estudiantes deberán presentar y defender los avances de su proyecto de base de datos personal. El objetivo es demostrar la solidez de su diseño (Conceptual y Lógico normalizado), así como la capacidad de extraer valor de los datos mediante consultas SQL y aplicar lógica de negocio compleja utilizando PL/SQL.
+En esta evaluación, los estudiantes deberán presentar y defender los avances de su proyecto de base de datos personal. El objetivo es demostrar la solidez de su diseño (Conceptual y Lógico normalizado), así como la capacidad de extraer valor de los datos mediante consultas SQL y aplicar lógica de negocio utilizando PL/SQL.
 
 La evaluación será mediante una **presentación oral** apoyada en material visual (PPT, PDF, o demostración en vivo de código/diagramas).
 

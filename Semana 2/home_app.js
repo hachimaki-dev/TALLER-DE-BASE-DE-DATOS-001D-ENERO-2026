@@ -23,12 +23,21 @@ createApp({
             },
             {
                 id: 3,
-                title: "PL/SQL ADVANCED",
-                subtitle: "Chapter 2: Master Class",
+                title: "PL/SQL: ESTRUCTURAS",
+                subtitle: "Bucles y Cursores",
                 url: "PLSQL_Part2/taller.html",
                 color: "#d30d1d", // Red
                 image: "url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop')", // Placeholder retro tech image
-                previewText: "Loops, Cursors, DML and Transactions. The real deal."
+                previewText: "Lógica procedimental para manejo avanzado de datos."
+            },
+            {
+                id: 4,
+                title: "PL/SQL: DESAFÍOS",
+                subtitle: "Resumen y Taller Final",
+                url: "PLSQL_Challenges/taller.html",
+                color: "#18a0fb", // Blue/Azure
+                image: "url('https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?q=80&w=2070&auto=format&fit=crop')", // Placeholder code/laptop image
+                previewText: "Aplica todo lo aprendido en tu proyecto de Steam, Crunchyroll o MercadoLibre."
             }
         ]);
 

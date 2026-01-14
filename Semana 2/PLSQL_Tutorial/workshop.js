@@ -189,7 +189,7 @@ const app = Vue.createApp({
                 // --- BOSS BATTLE: ALCORITHM EXPLANATION (VERBOSE) ---
                 {
                     section: 'BOSS BATTLE',
-                    title: 'El Algoritmo: Marcar Leído',
+                    title: 'Lógica: Marcar Leído',
                     subtitle: 'Desglosando la lógica paso a paso',
                     content: `
                         <div class="h-full flex flex-col justify-center">

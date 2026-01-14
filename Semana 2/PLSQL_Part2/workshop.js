@@ -10,8 +10,8 @@ const app = Vue.createApp({
                 // ====================================================================================
                 {
                     section: 'ONBOARDING',
-                    title: 'ZapChat Academy',
-                    subtitle: 'Entrenamiento Avanzado',
+                    title: 'Entorno de Desarrollo',
+                    subtitle: 'Estructuras y Control',
                     content: `
                         <div class="text-center">
                             <ion-icon name="school" class="text-6xl text-purple-600 mb-4"></ion-icon>
@@ -399,8 +399,8 @@ const app = Vue.createApp({
 
                 {
                     section: 'FIN DEL TALLER',
-                    title: 'Graduación',
-                    subtitle: 'ZapChat Senior Developer',
+                    title: 'Capacitación Completada',
+                    subtitle: 'Especialista en Backend',
                     content: `
                         <div class="text-center">
                             <ion-icon name="ribbon" class="text-8xl text-yellow-400 mb-4 animate-bounce"></ion-icon>

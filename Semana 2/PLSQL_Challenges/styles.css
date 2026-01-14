@@ -59,9 +59,16 @@ body {
 /* Backgrounds - Tamed Down */
 .bg-pattern {
     /* Subtle dot pattern instead of aggressive one */
-    background-color: var(--c-purple);
+    background-color: #0b1120;
+    /* Deep blue/azure */
     background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
+    z-index: -1 !important;
+}
+
+.bg-halftone-azure {
+    background-image: radial-gradient(#18a0fb 20%, transparent 20%);
+    background-size: 30px 30px;
 }
 
 /* Ensure Reader is SOLID WHITE */

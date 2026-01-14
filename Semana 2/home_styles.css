@@ -79,7 +79,7 @@ body {
 
 .p5-title {
     font-family: 'Anton', sans-serif;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 5vw, 3rem);
     margin: 0;
     transform: skewX(calc(var(--p5-skew) * -1));
     /* Counter-skew text */
@@ -90,15 +90,16 @@ body {
 .p5-subtitle {
     font-family: 'Bangers', cursive;
     color: var(--p5-red);
-    font-size: 1.5rem;
+    font-size: clamp(0.8rem, 2vw, 1.5rem);
     position: absolute;
-    right: -20px;
-    bottom: -15px;
+    right: -10px;
+    bottom: -10px;
     background: var(--p5-white);
     padding: 2px 10px;
-    transform: rotate(-10deg);
+    transform: rotate(-5deg);
     border: 2px solid var(--p5-black);
     color: var(--p5-black);
+    white-space: nowrap;
 }
 
 /* Main Content: Split Layout */
