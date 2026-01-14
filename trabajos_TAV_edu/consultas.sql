@@ -56,5 +56,8 @@ having count(*) >1;
 
 
 --Ejercicio Extra: Listar el nombre del usuario y el nombre de su plan de suscripción actual.
+select u.nombre_usuario, p.nombre_plan from usuarios u 
+join suscripciones s on s.id_usuario=u.id
+join planes_suscripcion p on s.id_plan = p.id;
 
 
