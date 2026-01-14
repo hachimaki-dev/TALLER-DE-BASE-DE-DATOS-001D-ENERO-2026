@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensa Final Proyecto Steam</title>
+    <style>
+        :root {
+            /* Paleta de Colores Steam */
+            --bg-dark: #171a21;       /* Fondo Principal */
+            --bg-panel: #1b2838;      /* Paneles */
+            --steam-blue: #66c0f4;    /* Acentos Principales */
+            --steam-green: #a4d007;   /* Detalles / Éxito */
+            --text-main: #c7d5e0;     /* Texto general */
+            --text-header: #ffffff;   /* Títulos */
+            --border: #2a475e;        /* Bordes */
+            --code-bg: #0d1117;       /* Fondo de código */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #2a475e 0%, #171a21 100%);
+        }
+
+        .slide {
+            display: none;
+            width: 90%;
+            height: 90%;
+            padding: 40px;
+            box-sizing: border-box;
+            background: rgba(27, 40, 56, 0.95);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            border-radius: 6px;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .slide.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tipografía */
+        h1 { font-size: 3rem; color: var(--steam-blue); margin-bottom: 10px; text-shadow: 2px 2px 4px #000; }
+        h2 { font-size: 2.2rem; border-bottom: 3px solid var(--steam-green); padding-bottom: 10px; color: var(--text-header); margin-top: 0; }
+        h3 { color: var(--steam-blue); margin-top: 15px; margin-bottom: 5px; font-size: 1.4rem; }
+        p, li { font-size: 1.1rem; line-height: 1.5; margin-bottom: 10px; }
+        strong { color: var(--text-header); }
+
+        /* Estructuras de Diseño */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Áreas para Modelos */
+        .model-container {
+            flex-grow: 1;
+            border: 2px solid var(--steam-blue);
+            background: #ffffff; 
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .model-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Bloques de Código */
+        .code-panel {
+            background-color: var(--code-bg);
+            border-left: 5px solid var(--steam-green);
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; /* Letra un poco más chica para que quepa todo */
+            color: #e6e6e6;
+            overflow: auto;
+            max-height: 300px; /* Scroll si es muy largo */
+            box-shadow: inset 0 0 10px #000;
+            white-space: pre-wrap; /* Mantiene formato pero ajusta líneas largas */
+        }
+
+        .keyword { color: #cc7832; font-weight: bold; }
+        .function { color: #ffc66d; }
+        .comment { color: #808080; font-style: italic; }
+
+        /* Cajas de Explicación */
+        .explanation-box {
+            background: rgba(102, 192, 244, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border: 1px solid var(--steam-blue);
+        }
+
+        /* Navegación */
+        .nav-btn {
+            position: absolute;
+            bottom: 30px;
+            background: var(--bg-panel);
+            color: var(--steam-blue);
+            border: 1px solid var(--steam-blue);
+            padding: 10px 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 100;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: var(--steam-blue); color: var(--bg-dark); }
+        .prev { left: 50px; }
+        .next { right: 50px; }
+        .indicator { position: absolute; bottom: 35px; width: 100%; text-align: center; color: var(--steam-blue); font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+<div class="slide-container">
+
+    <div class="slide active">
+        <div style="text-align: center; margin: auto;">
+            <img src="https://store.cloudflare.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016" alt="Steam Logo" style="width: 250px; margin-bottom: 30px;">
+            <h1>Sistema de Gestión Steam</h1>
+            <h2 style="border: none;">Defensa de Arquitectura de Datos</h2>
+            <p><strong>Temas:</strong> SQL Avanzado y Automatización PL/SQL</p>
+            <p style="color: var(--steam-blue);">Evaluación Semana 2</p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>Contexto del Negocio</h2>
+        <div class="two-columns">
+            <div>
+                <h3>La Plataforma</h3>
+                <p>Steam es un servicio de distribución digital global que requiere alta disponibilidad.</p>
+                <ul>
+                    <li><strong>Alcance Global:</strong> Usuarios en múltiples países y divisas.</li>
+                    <li><strong>Volumen:</strong> Miles de transacciones por minuto.</li>
+                    <li><strong>Social:</strong> Red de amistades y reseñas.</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Requerimientos Críticos</h3>
+                <ul>
+                    <li><strong>Integridad Financiera:</strong> Auditoría precisa de pagos.</li>
+                    <li><strong>Consistencia:</strong> Integridad referencial en bibliotecas.</li>
+                    <li><strong>Inteligencia:</strong> Análisis de datos para clasificar usuarios y juegos.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>Modelo Conceptual (Entidades)</h2>
+        <p>Identificación de relaciones de alto nivel.</p>
+        <div class="model-container">
+            <iframe src="Modelo Conceptual.html" class="model-frame" title="Modelo Conceptual"></iframe>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>Modelo Relacional y Normalización</h2>
+        <p>Esquema normalizado a 3FN para evitar redundancia.</p>
+        <div class="model-container">
+            <iframe src="Relational_1.html" class="model-frame" title="Modelo Relacional"></iframe>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>Consultas SQL: Análisis Financiero</h2>
+        <div class="two-columns">
+            <div>
+                <h3>Top 5 Juegos con Mayores Ingresos</h3>
+                <div class="code-panel">
+SELECT 
+    j.nombre AS Nombre_Juego, 
+    COUNT(t.id) AS Unidades_Vendidas,
+    TO_CHAR(SUM(t.monto_pagado), '$999,999.00') AS Total_Ingresos
+FROM 
+    JUEGOS j
+JOIN 
+    TRANSACCIONES t ON j.id = t.id_juego
+WHERE 
+    t.estado = 'completada'
+GROUP BY 
+    j.nombre
+ORDER BY 
+    SUM(t.monto_pagado) DESC
+FETCH FIRST 5 ROWS ONLY;
+                </div>
+            </div>
+            <div>
+                <h3>Usuarios que gastan más del promedio</h3>
+                <div class="code-panel">
+SELECT 
+    u.nombre_usuario,
+    p.nombre AS Pais,
+    COUNT(t.id) AS Total_Transacciones,
+    SUM(t.monto_pagado) AS Gasto_Total
+FROM 
+    USUARIOS u
+JOIN 
+    PAIS p ON u.id_pais = p.id
+JOIN 
+    TRANSACCIONES t ON u.id = t.id_usuario
+GROUP BY 
+    u.nombre_usuario, p.nombre
+HAVING 
+    SUM(t.monto_pagado) > (SELECT AVG(monto_pagado) FROM TRANSACCIONES)
+ORDER BY 
+    Gasto_Total DESC;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>Consultas SQL: Métricas de Producto</h2>
+        <div class="two-columns">
+            <div>
+                <h3>Juegos adquiridos por género</h3>
+                <div class="code-panel">
+SELECT 
+    g.nombre_genero,
+    COUNT(bu.id) AS Cantidad_Instalaciones
+FROM 
+    GENEROS g
+JOIN 
+    JUEGO_GENERO jg ON g.id = jg.id_genero
+JOIN 
+    JUEGOS j ON jg.id_juego = j.id
+JOIN 
+    BIBLIOTECA_USUARIO bu ON j.id = bu.id_juego
+GROUP BY 
+    g.nombre_genero
+ORDER BY 
+    Cantidad_Instalaciones DESC;
+                </div>
+            </div>
+            <div>
+                <h3>Porcentaje de aceptación (Reviews)</h3>
+                <div class="code-panel">
+SELECT 
+    j.nombre,
+    COUNT(r.id) AS Total_Resenas,
+    SUM(CASE WHEN r.recomendado = 'SI' THEN 1 ELSE 0 END) AS Votos_Positivos,
+    ROUND((SUM(CASE WHEN r.recomendado = 'SI' THEN 1 ELSE 0 END) / COUNT(r.id)) * 100, 2) || '%' AS Porcentaje_Aceptacion
+FROM 
+    JUEGOS j
+JOIN 
+    RESENAS r ON j.id = r.id_juego
+GROUP BY 
+    j.nombre
+HAVING 
+    COUNT(r.id) >= 1
+ORDER BY 
+    Porcentaje_Aceptacion DESC;
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>PL/SQL: Uso de RECORD e IF</h2>
+        <h3>Clasificación de Precio del Juego</h3>
+        <p>Uso de tipos personalizados (RECORD) y lógica condicional simple.</p>
+        
+        <div class="code-panel" style="max-height: 400px;">
+DECLARE
+    -- Definimos un TIPO DE DATO personalizado (RECORD)
+    TYPE t_datos_juego IS RECORD (
+        nombre_juego JUEGOS.nombre%TYPE,
+        precio_juego JUEGOS.precio%TYPE
+    );
+    
+    v_juego t_datos_juego;
+    v_id_busqueda NUMBER := 1; 
+
+BEGIN
+    -- Guardamos datos en el RECORD
+    SELECT nombre, precio INTO v_juego
+    FROM JUEGOS WHERE id = v_id_busqueda;
+
+    DBMS_OUTPUT.PUT_LINE('Analizando juego: ' || v_juego.nombre_juego);
+
+    -- Lógica IF para evaluar el precio
+    IF v_juego.precio_juego > 50 THEN
+        DBMS_OUTPUT.PUT_LINE('Clasificación: Es un juego COSTOSO ($' || v_juego.precio_juego || ')');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Clasificación: Es un juego ECONÓMICO ($' || v_juego.precio_juego || ')');
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Error: No existe un juego con ese ID.');
+END;
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>PL/SQL: Cursor Implícito (FOR Loop)</h2>
+        <h3>Lista de Usuarios con Mayor Saldo</h3>
+        <p>Optimización de código mediante iteración automática sobre resultados SQL.</p>
+
+        <div class="code-panel">
+DECLARE
+    -- No necesitamos declarar variables complejas, el cursor FOR lo hace automático
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- LISTA DE USUARIOS CON MAYOR SALDO ---');
+    
+    -- Ciclo FOR que recorre directamente el resultado de la consulta
+    FOR r_usuario IN (
+        SELECT nombre_usuario, saldo_cartera 
+        FROM USUARIOS 
+        WHERE saldo_cartera > 0
+        ORDER BY saldo_cartera DESC
+        FETCH FIRST 5 ROWS ONLY
+    ) LOOP
+        -- En cada vuelta del bucle imprimimos los datos
+        DBMS_OUTPUT.PUT_LINE('Usuario: ' || r_usuario.nombre_usuario ||' | Saldo: $' || r_usuario.saldo_cartera);
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('-----------------------------------------');
+END;
+        </div>
+        <div class="explanation-box">
+            <strong>Ventaja Técnica:</strong> Este método abre, recupera (fetch) y cierra el cursor automáticamente, reduciendo líneas de código y evitando errores de gestión de memoria.
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2>PL/SQL: Colecciones y Lógica Compleja</h2>
+        <h3>Auditoría de Niveles (Batch Processing)</h3>
+        <div class="two-columns">
+            <div class="code-panel" style="max-height: 500px;">
+DECLARE
+    -- 1. VARRAY: Lista de usuarios a auditar
+    TYPE t_lote_usuarios IS VARRAY(6) OF NUMBER;
+    v_ids_a_auditar t_lote_usuarios := t_lote_usuarios(1, 2, 5, 12, 15, 18); 
+
+    v_nombre_user   USUARIOS.nombre_usuario%TYPE;
+    v_total_gasto   NUMBER;
+    v_nivel         VARCHAR2(50);
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== AUDITORÍA DE NIVELES ===');
+
+    -- 2. LOOP: Recorremos la lista
+    FOR i IN 1 .. v_ids_a_auditar.COUNT LOOP
+        
+        -- 3. CONSULTA SQL (JOIN + NVL)
+        SELECT u.nombre_usuario, NVL(SUM(t.monto_pagado), 0)
+        INTO v_nombre_user, v_total_gasto
+        FROM USUARIOS u
+        LEFT JOIN TRANSACCIONES t ON u.id = t.id_usuario AND t.estado = 'completada'
+        WHERE u.id = v_ids_a_auditar(i)
+        GROUP BY u.nombre_usuario;
+
+        -- 4. ESTRUCTURA IF / ELSIF
+        IF v_total_gasto >= 200 THEN
+            v_nivel := 'PLATINO';
+        ELSIF v_total_gasto >= 100 THEN
+            v_nivel := 'ORO';
+        ELSIF v_total_gasto >= 50 THEN
+            v_nivel := 'PLATA';
+        ELSE
+            v_nivel := 'BRONCE';
+        END IF;
+
+        DBMS_OUTPUT.PUT_LINE('Usuario: ' || RPAD(v_nombre_user, 15) || 
+                            ' | Gasto: $' || TO_CHAR(v_total_gasto, '999.99') || 
+                            ' | Nivel: ' || v_nivel);
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('=== FIN DEL PROCESO ===');
+END;
+            </div>
+            <div>
+                <p>Implementación completa de requisitos:</p>
+                <ul>
+                    <li>✅ <strong>VARRAY:</strong> Simulación de carga por lotes (Ids 1, 2, 5, 12, 15, 18).</li>
+                    <li>✅ <strong>LOOP:</strong> Iteración sobre la colección.</li>
+                    <li>✅ <strong>JOIN:</strong> Obtención optimizada de datos.</li>
+                    <li>✅ <strong>IF/ELSIF:</strong> Lógica de negocio escalonada para asignar niveles de fidelidad.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div style="text-align: center; margin: auto;">
+            <h2>Conclusiones Finales</h2>
+            <div style="text-align: left; display: inline-block; width: 70%;">
+                <div class="explanation-box" style="background: rgba(164, 208, 7, 0.1); border-color: var(--steam-green);">
+                    <ul>
+                        <li style="margin-bottom: 20px;">✅ <strong>Diseño Robusto (3FN):</strong> El Modelo Relacional elimina redundancias y anomalías.</li>
+                        <li style="margin-bottom: 20px;">✅ <strong>Inteligencia de Datos:</strong> Las consultas SQL extraen valor real (Ingresos, Reviews, Uso).</li>
+                        <li style="margin-bottom: 20px;">✅ <strong>Automatización:</strong> PL/SQL permite procesar lógica de negocio compleja (Niveles, Clasificaciones) dentro de la base de datos.</li>
+                    </ul>
+                </div>
+            </div>
+            <br><br>
+            <h3 style="color: var(--steam-green);">Gracias por su atención</h3>
+        </div>
+    </div>
+
+    <div class="indicator" id="slideNum">1 / 10</div>
+    <button class="nav-btn prev" onclick="changeSlide(-1)">&#10094; Anterior</button>
+    <button class="nav-btn next" onclick="changeSlide(1)">Siguiente &#10095;</button>
+
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const numDisplay = document.getElementById('slideNum');
+
+    function update() {
+        slides.forEach((s, i) => {
+            s.classList.remove('active');
+            if (i === current) s.classList.add('active');
+        });
+        numDisplay.textContent = `${current + 1} / ${slides.length}`;
+    }
+
+    function changeSlide(dir) {
+        current += dir;
+        if (current < 0) current = 0;
+        if (current >= slides.length) current = slides.length - 1;
+        update();
+    }
+
+    // Soporte Teclado
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    update();
+</script>
+
+</body>
+</html>
