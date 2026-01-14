@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERSONA 5: SELECTOR</title>
+
+    <!-- Fonts: Bangers (Comic), Anton (Impact), Roboto (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Roboto:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="home_styles.css">
+</head>
+
+<body>
+    <!-- Background Pattern -->
+    <div class="bg-p5-pattern"></div>
+
+    <div id="app" v-cloak>
+
+        <!-- Animated Background Halftone -->
+        <div class="p5-halftone"></div>
+
+        <!-- Header -->
+        <header class="p5-header">
+            <div class="p5-title-box">
+                <h1 class="p5-title">PHANTOM <span style="color: var(--p5-red)">THIEVES</span> DATABASE</h1>
+                <div class="p5-subtitle">TAKE YOUR KNOWLEDGE</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p5-content">
+
+            <!-- Floating Stars -->
+            <div class="shape shape-star" style="top: 20%; left: 10%; width: 50px; height: 50px;"></div>
+            <div class="shape shape-star"
+                style="top: 70%; left: 5%; width: 30px; height: 30px; animation-duration: 4s;"></div>
+            <div class="shape shape-star" style="top: 15%; right: 15%; width: 40px; height: 40px; animation-delay: 1s;">
+            </div>
+
+            <div class="p5-divider"></div>
+
+            <!-- Left: Menu -->
+            <div class="p5-menu">
+                <div v-for="(item, index) in menuItems" :key="item.id" class="menu-item"
+                    :class="{ 'active': hoveredItem.id === item.id }" @mouseover="setHovered(item)"
+                    @click="navigateTo(item)">
+                    <span class="menu-number">{{ index + 1 }}</span>
+                    {{ item.title }}
+                </div>
+            </div>
+
+            <!-- Right: Preview -->
+            <div class="p5-preview">
+                <div class="preview-card" :style="{ borderColor: hoveredItem.color }">
+                    <div class="preview-image" :style="{ backgroundImage: hoveredItem.image }">
+                        <!-- If no image, maybe show icon -->
+                        <div v-if="!hoveredItem.image"
+                            class="w-full h-full flex items-center justify-center text-black">
+                            <ion-icon name="lock-closed" style="font-size: 6rem; opacity: 0.2;"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="preview-title" :style="{ background: hoveredItem.color }">
+                        {{ hoveredItem.subtitle }}
+                    </div>
+                    <div class="preview-overlay">
+                        <p style="font-family: 'Roboto'; font-size: 1.1rem;">
+                            {{ hoveredItem.previewText }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Transition Overlay -->
+        <div class="transition-overlay" :class="{ 'active': isTransitioning }">
+            <div class="take-your-heart">TAKE YOUR HEART</div>
+        </div>
+
+    </div>
+
+    <script src="home_app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,357 @@
+/* Persona 5 Home Styles */
+
+:root {
+    --p5-red: #d30d1d;
+    --p5-black: #1a1a1a;
+    --p5-white: #f5f5f5;
+    --p5-yellow: #f2c94c;
+    --p5-gray: #333333;
+    --p5-skew: -5deg;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--p5-black);
+    color: var(--p5-white);
+}
+
+.bg-p5-pattern {
+    background-image:
+        linear-gradient(45deg, var(--p5-red) 25%, transparent 25%, transparent 75%, var(--p5-red) 75%, var(--p5-red)),
+        linear-gradient(45deg, var(--p5-red) 25%, transparent 25%, transparent 75%, var(--p5-red) 75%, var(--p5-red));
+    background-position: 0 0, 10px 10px;
+    background-size: 20px 20px;
+    opacity: 0.1;
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dynamic Halftone Background Animation */
+.p5-halftone {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: radial-gradient(var(--p5-gray) 20%, transparent 20%);
+    background-size: 30px 30px;
+    opacity: 0.15;
+    transform: rotate(var(--p5-skew));
+    animation: halftoneScroll 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes halftoneScroll {
+    0% {
+        transform: rotate(-15deg) translateY(0);
+    }
+
+    100% {
+        transform: rotate(-15deg) translateY(-100px);
+    }
+}
+
+/* Header */
+.p5-header {
+    padding: 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+.p5-title-box {
+    background: var(--p5-black);
+    color: var(--p5-white);
+    padding: 10px 30px;
+    display: inline-block;
+    transform: skewX(var(--p5-skew));
+    border: 4px solid var(--p5-white);
+    box-shadow: 5px 5px 0 var(--p5-red);
+}
+
+.p5-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 3rem;
+    margin: 0;
+    transform: skewX(calc(var(--p5-skew) * -1));
+    /* Counter-skew text */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.p5-subtitle {
+    font-family: 'Bangers', cursive;
+    color: var(--p5-red);
+    font-size: 1.5rem;
+    position: absolute;
+    right: -20px;
+    bottom: -15px;
+    background: var(--p5-white);
+    padding: 2px 10px;
+    transform: rotate(-10deg);
+    border: 2px solid var(--p5-black);
+    color: var(--p5-black);
+}
+
+/* Main Content: Split Layout */
+.p5-content {
+    flex: 1;
+    display: flex;
+    position: relative;
+    z-index: 5;
+    overflow: hidden;
+}
+
+/* Left: Menu List */
+.p5-menu {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 5%;
+    gap: 1.5rem;
+    position: relative;
+}
+
+/* Slash Divider */
+.p5-divider {
+    position: absolute;
+    top: -10%;
+    bottom: -10%;
+    left: 45%;
+    width: 10px;
+    background: var(--p5-white);
+    transform: skewX(-15deg);
+    box-shadow: 0 0 15px var(--p5-red);
+    z-index: 5;
+}
+
+.menu-item {
+    background: var(--p5-black);
+    color: var(--p5-white);
+    padding: 1.5rem 3rem;
+    font-family: 'Anton', sans-serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    transform: skewX(-15deg) translateX(0);
+    border: 3px solid var(--p5-white);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+    width: 80%;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--p5-red);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.menu-item:hover {
+    transform: skewX(-15deg) translateX(30px) scale(1.1);
+    color: var(--p5-black);
+    border-color: var(--p5-black);
+    box-shadow: -10px 10px 0 rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.menu-item:hover::before {
+    transform: scaleX(1);
+}
+
+.menu-item.active {
+    background: var(--p5-white);
+    color: var(--p5-black);
+    border-color: var(--p5-red);
+}
+
+.menu-number {
+    font-family: 'Bangers', cursive;
+    font-size: 3rem;
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    color: var(--p5-red);
+    text-shadow: 2px 2px 0 var(--p5-white);
+    transform: rotate(-10deg);
+    z-index: 20;
+}
+
+.menu-item:hover .menu-number {
+    color: var(--p5-white);
+    text-shadow: 2px 2px 0 var(--p5-black);
+}
+
+/* Right: Preview Area */
+.p5-preview {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.preview-card {
+    background: var(--p5-white);
+    border: 8px solid var(--p5-black);
+    padding: 1rem;
+    width: 80%;
+    height: 60%;
+    transform: skewY(2deg) rotateY(-10deg);
+    box-shadow: 20px 20px 0 var(--p5-red);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.preview-image {
+    flex: 1;
+    background-color: #ddd;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--p5-black);
+    position: relative;
+}
+
+.preview-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg,
+            rgba(0, 0, 0, 0.1),
+            rgba(0, 0, 0, 0.1) 10px,
+            transparent 10px,
+            transparent 20px);
+}
+
+.preview-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 1rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.preview-card:hover .preview-overlay {
+    transform: translateY(0);
+}
+
+.preview-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 2.5rem;
+    color: var(--p5-black);
+    text-transform: uppercase;
+    margin-top: 1rem;
+    text-align: center;
+    background: var(--p5-yellow);
+    padding: 0.5rem;
+    transform: skewX(-10deg);
+    box-shadow: 5px 5px 0 var(--p5-black);
+}
+
+/* Floating Shapes */
+.shape {
+    position: absolute;
+    background: var(--p5-white);
+    opacity: 0.8;
+    z-index: 1;
+    pointer-events: none;
+    animation: float 6s infinite ease-in-out;
+}
+
+.shape-star {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background: var(--p5-yellow);
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(20px, -20px) rotate(10deg);
+    }
+}
+
+/* Transition Overlay */
+.transition-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--p5-red);
+    z-index: 100;
+    transform: translateY(100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.transition-overlay.active {
+    animation: wipeUp 0.8s forwards;
+}
+
+@keyframes wipeUp {
+    0% {
+        transform: translateY(100%) skewY(10deg);
+    }
+
+    100% {
+        transform: translateY(0) skewY(0deg);
+    }
+}
+
+.take-your-heart {
+    font-family: 'Bangers', cursive;
+    font-size: 8rem;
+    color: var(--p5-white);
+    text-shadow: 10px 10px 0 var(--p5-black);
+    transform: rotate(-10deg) scale(0);
+    opacity: 0;
+}
+
+.transition-overlay.active .take-your-heart {
+    animation: popIn 0.5s 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% {
+        transform: rotate(-10deg) scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotate(-10deg) scale(1);
+        opacity: 1;
+    }
+}
