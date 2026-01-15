@@ -18,28 +18,56 @@ BEGIN
 END;
 /
 
---Script 3: simular una promocion 2x1
+--Script 2: Verificar si un usuario tiene el saldo suficiente para efectuar una compra
 
 DECLARE
-
-    v_id_carrito NUMBER := 1;
+    v_presupuesto NUMBER := 100000;
+    v_valor PRODUCTO.VALOR_PRODUCTO%TYPE;
+    v_id_producto NUMBER := 2;
 
 BEGIN
 
-    DBMS_OUTPUT.PUT_LINE('--- Aplicando promoción: 2x1 ---');
+    SELECT valor_producto
+    INTO v_valor
+    FROM PRODUCTO
+    WHERE id = v_id_producto;
 
-    FOR item IN (SELECT id_producto, cantidad FROM CARRITO_PRODUCTO WHERE id_carrito = v_id_carrito
+    IF v_presupuesto >= v_valor THEN
+
+        DBMS_OUTPUT.PUT_LINE('Compra permitida. saldo restante: $'|| (v_presupuesto - v_valor));
+
+    ELSE
+
+        DBMS_OUTPUT.PUT_LINE('Saldo insuficiente. faltan: $' || (v_valor-v_presupuesto));
+
+    END IF;
+
+END;
+/
+
+--Script 3: simular un descuento por categoria
+
+DECLARE
+
+    v_id_categoria NUMBER := 1;
+
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('--- Aplicando descuento ---');
+
+    FOR item IN (SELECT c.nombre_categoria , p.valor_producto FROM PRODUCTO p 
+    JOIN CATEGORIAS c ON p.id_categoria = c.id 
+    WHERE id_categoria = 1
     ) LOOP
         
-        UPDATE CARRITO_PRODUCTO
-        SET cantidad = item.cantidad + 1
-        WHERE id_carrito = v_id_carrito 
-          AND id_producto = item.id_producto;
+        UPDATE PRODUCTO
+        SET valor_producto = item.valor_producto -(item.valor_producto* 0.2)
+        WHERE id_categoria = v_id_categoria;
           
-        DBMS_OUTPUT.PUT_LINE('Producto ID ' || item.id_producto || ': Cantidad actualizada a ' || (item.cantidad + 1));
+        DBMS_OUTPUT.PUT_LINE('Producto ID ' || item.nombre_categoria || ': Cantidad actualizada a ');
     END LOOP;
 
-    COMMIT;
+    
     DBMS_OUTPUT.PUT_LINE('Promoción aplicada exitosamente.');
 END;
 
@@ -58,6 +86,7 @@ DECLARE
         JOIN COMUNA c ON d.id_comuna = c.id
         JOIN REGION r ON c.id_region = r.id
         WHERE ud.id_usuario = 1;
+    
 
 BEGIN
 
@@ -74,26 +103,28 @@ BEGIN
     END LOOP;
 
 END;
+/
+
 
 --Script 5: finalizar compra
 
 DECLARE
     v_carrito_id NUMBER := 1;
-    v_prod_extra NUMBER := 7; 
+    v_prod_comprado NUMBER := 7; 
 BEGIN
     
     UPDATE CARRITO SET estado = 'Pagado' WHERE id = v_carrito_id;
 
     
     INSERT INTO CARRITO_PRODUCTO (id_carrito, id_producto, cantidad) 
-    VALUES (v_carrito_id, v_prod_extra, 1);
-
+    VALUES (v_carrito_id, v_prod_comprado, 1);
     COMMIT; 
+
+    
     DBMS_OUTPUT.PUT_LINE('Pedido pagado y actualizado con éxito.');
 END;
 /
-ROLLBACK;
-/
+
 
 --SCRIPT 6: Mostrar los 5 productos mas caros
 
@@ -102,6 +133,8 @@ DECLARE
     TYPE t_top_productos IS VARRAY(5) OF PRODUCTO.NOMBRE_PRODUCTO%TYPE;
 
     v_ranking t_top_productos := t_top_productos();
+
+    v_valor PRODUCTO.VALOR_PRODUCTO%TYPE;
 
     v_indice NUMBER := 0;
 
@@ -118,9 +151,13 @@ BEGIN
         v_ranking(v_indice) := p.nombre_producto;
     END LOOP;
 
+    
+
     FOR i IN 1..v_ranking.COUNT LOOP
 
-        DBMS_OUTPUT.PUT_LINE('Puesto numero '||i||' : '||v_ranking(i));
+        SELECT valor_producto into v_valor FROM PRODUCTO WHERE nombre_producto = v_ranking(i);
+
+        DBMS_OUTPUT.PUT_LINE('Puesto numero '||i||' : '||v_ranking(i)||' '||v_valor);
     END LOOP;
 END;
-
+/

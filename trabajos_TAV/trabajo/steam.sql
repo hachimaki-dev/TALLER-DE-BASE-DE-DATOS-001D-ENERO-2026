@@ -97,10 +97,10 @@ DECLARE
         FROM JUEGOS j
         JOIN JUEGO_GENERO jg ON j.id = jg.id_juego
         JOIN GENEROS g ON jg.id_genero = g.id
-        WHERE g.id = 3;
+        WHERE g.id = 1;
 BEGIN
 
-    SELECT nombre_genero into v_nombre_genero from generos where id=3;
+    SELECT nombre_genero into v_nombre_genero from generos where id=1;
     DBMS_OUTPUT.PUT_LINE('--- Juegos de '||v_nombre_genero||' ---');
     FOR j IN c_juegos_genero LOOP
         DBMS_OUTPUT.PUT_LINE(j.nombre);
