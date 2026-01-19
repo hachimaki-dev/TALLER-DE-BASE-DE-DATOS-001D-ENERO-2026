@@ -8,3 +8,5 @@
 funcion hola(){
     imprimir("hola)
 }
+
+Modificado Por Cristian Solis.
