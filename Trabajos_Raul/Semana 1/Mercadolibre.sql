@@ -24,7 +24,7 @@ CREATE TABLE PRODUCTO(
     nombre_producto VARCHAR2(40)NOT NULL, 
     descripcion_producto VARCHAR2(250),
     valor_producto NUMBER(10,2)NOT NULL,
-    tamano_producto VARCHAR2(10)
+    tamano_producto VARCHAR2(10)--unidad de medida tabla aparte.
 );
 
 CREATE TABLE TIPO_TARJETAS(
@@ -50,7 +50,7 @@ CREATE TABLE PRODUCTO_CATEGORIAS(
 
 CREATE TABLE CODIGOS_AREA_PAIS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    nombre_dominio VARCHAR2(20) NOT NULL,
+    nombre_dominio VARCHAR2(20) NOT NULL,--tablas pais
     codigo_area VARCHAR2(20) NOT NULL
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE USUARIOS(
     nombre_usuario VARCHAR2(50) NOT NULL,
     email_usuario VARCHAR2(100)NOT NULL UNIQUE,
     id_pais NUMBER REFERENCES CODIGOS_AREA_PAIS(id) NOT NULL,
-    telefono_usuario VARCHAR2(15)NOT NULL,
+    telefono_usuario VARCHAR2(15)NOT NULL,--tabla 
     contrasena_usuario VARCHAR2(255)NOT NULL
 );
 

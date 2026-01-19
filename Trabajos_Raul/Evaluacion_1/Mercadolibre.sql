@@ -433,3 +433,15 @@ BEGIN
 END;
 /
 
+
+DECLARE
+    CURSOR c_users IS 
+        (SELECT nombre_usuario, telefono_usuario FROM USUARIOS);
+    END CURSOR;
+BEGIN
+    FOR p IN c_users LOOP
+        DBMS_OUTPUT.PUT_LINE('nombre de usuario: '|| p.nombre_usuario || ' y su telefono :' || p.telefono_usuario);
+    END LOOP;
+END;
+/
+
