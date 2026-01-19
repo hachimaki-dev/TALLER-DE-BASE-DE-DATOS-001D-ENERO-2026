@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Scripts PL/SQL: Mercado & Steam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/dracula.min.css" id="theme">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
+
+    <style>
+        .reveal pre code {
+            max-height: 650px;
+            font-size: 1.0rem;
+            line-height: 1.3;
+        }
+        .header-slide { color: #ffb86c; }
+        .sub-header { color: #8be9fd; font-size: 0.9em; margin-bottom: 10px; }
+        .comment { color: #6272a4; font-style: italic; }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <h1>Scripts</h1>
+                <h3>Mercadolibre & Steam</h3>
+                
+            </section>
+
+            <section data-background-color="#ffe600">
+                <h2 style="color: #2d327d;">Proyecto: MercadoLibre</h2>
+                <p style="color: #2d327d;">Gestión de Productos y Stock</p>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S1: Consulta Básica (%TYPE)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    
+    v_nombre PRODUCTO.nombre_producto%TYPE;
+    v_precio PRODUCTO.valor_producto%TYPE;
+    v_usuario_row USUARIOS%ROWTYPE;
+BEGIN
+    SELECT nombre_producto, valor_producto INTO v_nombre, v_precio
+    FROM PRODUCTO WHERE id = 1;
+    
+    SELECT * INTO v_usuario_row FROM USUARIOS WHERE id = 1;
+
+    DBMS_OUTPUT.PUT_LINE('Producto: ' || v_nombre);
+    DBMS_OUTPUT.PUT_LINE('Precio: $' || v_precio);
+    DBMS_OUTPUT.PUT_LINE('Cliente: ' || v_usuario_row.nombre_usuario);
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S2: Verificar Presupuesto (IF)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_presupuesto NUMBER := 150000;
+    v_valor PRODUCTO.valor_producto%TYPE;
+    v_id_producto NUMBER := 2;
+BEGIN
+    SELECT valor_producto INTO v_valor
+    FROM PRODUCTO WHERE id = v_id_producto;
+
+    
+    IF v_presupuesto >= v_valor THEN
+        DBMS_OUTPUT.PUT_LINE('Compra Aprobada. Restante: $'
+            || (v_presupuesto - v_valor));
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Rechazada. Faltan: $' 
+            || (v_valor - v_presupuesto));
+    END IF;
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S3: Descuento Masivo (Loop ID)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_id_categoria NUMBER := 1;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- Aplicando Dscto Categoria 1 ---');
+
+    
+    FOR item IN (SELECT id, nombre_producto, valor_producto 
+                 FROM PRODUCTO 
+                 WHERE id_categoria = v_id_categoria) LOOP
+        
+        
+        UPDATE PRODUCTO
+        SET valor_producto = item.valor_producto * 0.9
+        WHERE id = item.id;
+          
+        DBMS_OUTPUT.PUT_LINE('Actualizado: ' || item.nombre_producto);
+    END LOOP;
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S4: Reporte Domicilio (Cursor Join)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_cliente USUARIOS.nombre_usuario%TYPE;
+    
+    CURSOR c_direcciones IS
+        SELECT d.calle_nombre, c.nombre_comuna, r.nombre_region
+        FROM USUARIOS_DOMICILIO ud
+        JOIN DOMICILIO d ON ud.id_direccion = d.id
+        JOIN COMUNA c ON d.id_comuna = c.id
+        JOIN REGION r ON c.id_region = r.id
+        WHERE ud.id_usuario = 1;
+BEGIN
+    SELECT nombre_usuario INTO v_cliente FROM USUARIOS WHERE id = 1;
+    DBMS_OUTPUT.PUT_LINE('Direcciones de: '|| v_cliente);
+
+    FOR d IN c_direcciones LOOP
+        DBMS_OUTPUT.PUT_LINE(d.calle_nombre || ', ' || d.nombre_comuna);
+        DBMS_OUTPUT.PUT_LINE('Región: ' || d.nombre_region);
+        DBMS_OUTPUT.PUT_LINE('--------------------');
+    END LOOP;
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S5: Transacción Completa (Stock)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_carrito_id NUMBER := 1;
+    v_prod_id NUMBER := 7; 
+    v_cant NUMBER := 1;
+BEGIN
+    
+    UPDATE CARRITO SET estado = 'Pagado' WHERE id = v_carrito_id;
+    
+    
+    INSERT INTO CARRITO_PRODUCTO (id_carrito, id_producto, cantidad) 
+    VALUES (v_carrito_id, v_prod_id, v_cant);
+
+
+    UPDATE PRODUCTO SET stock = stock - v_cant 
+    WHERE id = v_prod_id;
+
+    COMMIT; 
+    DBMS_OUTPUT.PUT_LINE('Stock descontado y compra registrada.');
+END;
+
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S6: Top Productos (Varray)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    
+    TYPE t_top IS VARRAY(5) OF PRODUCTO.nombre_producto%TYPE;
+    v_ranking t_top := t_top();
+    v_valor PRODUCTO.valor_producto%TYPE;
+    v_cont NUMBER := 0;
+BEGIN
+    FOR p IN (SELECT nombre_producto FROM PRODUCTO 
+              ORDER BY valor_producto DESC) LOOP
+        EXIT WHEN v_ranking.COUNT = 5;
+        v_ranking.EXTEND;
+        v_cont := v_cont + 1;
+        v_ranking(v_cont) := p.nombre_producto;
+    END LOOP;
+
+    FOR i IN 1..v_ranking.COUNT LOOP
+        SELECT valor_producto INTO v_valor FROM PRODUCTO 
+        WHERE nombre_producto = v_ranking(i);
+        DBMS_OUTPUT.PUT_LINE(i ||'. '|| v_ranking(i) ||' ($'||v_valor||')');
+    END LOOP;
+END;
+                </code></pre>
+            </section>
+
+            <section data-background-color="#171a21">
+                <h2 style="color: #c7d5e0;">Proyecto: Steam</h2>
+                <p style="color: #66c0f4;">Gestión de Biblioteca y Créditos</p>
+            </section>
+
+             <section>
+                <h3 class="sub-header">S1: Info Juego y Dev</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    
+    v_nombre_juego JUEGOS.nombre%TYPE; 
+    v_dev_row      DESARROLLADORES%ROWTYPE;
+BEGIN
+    
+    SELECT nombre, id_desarrollador INTO v_nombre_juego, v_dev_row.id
+    FROM JUEGOS WHERE id = 2;
+    
+    
+    SELECT * INTO v_dev_row FROM DESARROLLADORES WHERE id = v_dev_row.id;
+
+    DBMS_OUTPUT.PUT_LINE('Juego: ' || v_nombre_juego);
+    DBMS_OUTPUT.PUT_LINE('Dev: ' || v_dev_row.nombre);
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S2: Validación Fondos (Join)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_saldo USUARIOS.SALDO_CARTERA%TYPE;
+    v_precio JUEGOS.PRECIO%TYPE;
+    v_id_saldo NUMBER := 1;
+    v_id_juego NUMBER := 2;
+BEGIN
+    SELECT u.saldo_cartera,
+    j.precio
+    INTO v_saldo, v_precio
+    FROM USUARIOS u, JUEGOS j 
+    WHERE u.id = v_id_saldo AND j.id = v_id_juego;
+
+    IF v_saldo >= v_precio THEN
+        DBMS_OUTPUT.PUT_LINE('Compra permitida. saldo restante: $'|| (v_saldo - v_precio));
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Saldo insuficiente. faltan: $' || (v_precio-v_saldo));
+    END IF;
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S3: Simulador Horas (Update Loop)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_nombre_usuario USUARIOS.NOMBRE_USUARIO%TYPE;
+    v_nombre_juego JUEGOS.NOMBRE%TYPE;
+    v_horas_actuales BIBLIOTECA_USUARIO.TIEMPO_JUGADO%TYPE; 
+    v_usuario_id     NUMBER := 1;   
+    v_juego_id       NUMBER := 1;
+
+BEGIN
+
+    SELECT u.nombre_usuario,
+    j.nombre,
+    b.tiempo_jugado
+    INTO v_nombre_usuario, v_nombre_juego, v_horas_actuales
+    FROM USUARIOS u 
+    JOIN BIBLIOTECA_USUARIO b ON b.id_usuario = u.id 
+    JOIN JUEGOS j ON b.id_juego = j.id 
+    WHERE u.id =v_usuario_id AND j.id = v_juego_id;
+
+    DBMS_OUTPUT.PUT_LINE('--- Iniciando sesión de juego ---');
+    DBMS_OUTPUT.PUT_LINE('Usuario: ' || v_nombre_usuario);
+    DBMS_OUTPUT.PUT_LINE('Juego: ' || v_nombre_juego);
+    DBMS_OUTPUT.PUT_LINE('Horas iniciales: ' || v_horas_actuales);
+
+    FOR i IN 1..5 LOOP
+        BEGIN
+            v_horas_actuales := v_horas_actuales + 1;
+            UPDATE BIBLIOTECA_USUARIO 
+            SET tiempo_jugado = v_horas_actuales 
+            WHERE id_usuario = v_usuario_id AND id_juego = v_juego_id;
+            DBMS_OUTPUT.PUT_LINE('Llevas ' || v_horas_actuales || ' horas jugadas.');
+            COMMIT;
+        END;
+    END LOOP;
+END;  
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S4: Listar por Género</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_nombre_genero GENEROS.nombre_genero%TYPE;
+    CURSOR c_juegos_genero IS
+        SELECT j.nombre 
+        FROM JUEGOS j
+        JOIN JUEGO_GENERO jg ON j.id = jg.id_juego
+        JOIN GENEROS g ON jg.id_genero = g.id
+        WHERE g.id = 1;
+BEGIN
+
+    SELECT nombre_genero into v_nombre_genero from generos where id=1;
+    DBMS_OUTPUT.PUT_LINE('--- Juegos de '||v_nombre_genero||' ---');
+    FOR j IN c_juegos_genero LOOP
+        DBMS_OUTPUT.PUT_LINE(j.nombre);
+    END LOOP;
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S5: Compra Segura (Transacción)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    v_user_id NUMBER := 1;
+    v_game_id NUMBER := 3;
+    v_precio NUMBER;
+    v_saldo_actual NUMBER;
+BEGIN 
+    SELECT precio INTO v_precio FROM JUEGOS WHERE id = v_game_id;
+    SELECT saldo_cartera INTO v_saldo_actual FROM USUARIOS WHERE id = v_user_id;
+    IF v_saldo_actual >= v_precio THEN
+        UPDATE USUARIOS 
+        SET saldo_cartera = saldo_cartera - v_precio 
+        WHERE id = v_user_id;
+
+        INSERT INTO BIBLIOTECA_USUARIO (id_usuario, id_juego) 
+        VALUES (v_user_id, v_game_id);
+
+        COMMIT; 
+        DBMS_OUTPUT.PUT_LINE('Compra realizada con éxito. Nuevo saldo: ' || (v_saldo_actual - v_precio));
+    ELSE
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: Saldo insuficiente. Tienes: ' || v_saldo_actual || ' y necesitas: ' || v_precio);
+    END IF;
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h3 class="sub-header">S6: Perfil (Record Personalizado)</h3>
+                <pre><code class="sql" data-trim data-noescape>
+DECLARE
+    TYPE t_resumen IS RECORD(
+        nombre USUARIOS.nombre_usuario%TYPE, 
+        pais PAIS.nombre%TYPE,               
+        saldo USUARIOS.saldo_cartera%TYPE
+    );
+    v_perfil t_resumen;
+BEGIN
+    SELECT u.nombre_usuario, p.nombre, u.saldo_cartera 
+    INTO v_perfil
+    FROM USUARIOS u 
+    JOIN PAIS p ON u.id_pais = p.id
+    WHERE u.id = 1;
+
+    DBMS_OUTPUT.PUT_LINE('User: ' || v_perfil.nombre);
+    DBMS_OUTPUT.PUT_LINE('País: ' || v_perfil.pais);
+    DBMS_OUTPUT.PUT_LINE('Wallet: $' || v_perfil.saldo);
+END;
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Fin de la presentación</h2>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>

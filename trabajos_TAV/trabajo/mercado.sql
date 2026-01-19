@@ -45,40 +45,34 @@ BEGIN
 END;
 /
 
---Script 3: simular un descuento por categoria
-
+-- Script 3 : Descuento por producto individual
 DECLARE
-
     v_id_categoria NUMBER := 1;
-
 BEGIN
-
     DBMS_OUTPUT.PUT_LINE('--- Aplicando descuento ---');
-
-    FOR item IN (SELECT c.nombre_categoria , p.valor_producto FROM PRODUCTO p 
-    JOIN CATEGORIAS c ON p.id_categoria = c.id 
-    WHERE id_categoria = 1
+    FOR item IN (SELECT p.id, c.nombre_categoria , p.valor_producto 
+                 FROM PRODUCTO p 
+                 JOIN CATEGORIAS c ON p.id_categoria = c.id 
+                 WHERE id_categoria = v_id_categoria
     ) LOOP
         
         UPDATE PRODUCTO
-        SET valor_producto = item.valor_producto -(item.valor_producto* 0.2)
-        WHERE id_categoria = v_id_categoria;
+        SET valor_producto = item.valor_producto - (item.valor_producto * 0.2)
+        WHERE id = item.id; 
           
-        DBMS_OUTPUT.PUT_LINE('Producto ID ' || item.nombre_categoria || ': Cantidad actualizada a ');
+        DBMS_OUTPUT.PUT_LINE('Descuento aplicado al producto ID: ' || item.id);
     END LOOP;
-
     
-    DBMS_OUTPUT.PUT_LINE('Promoción aplicada exitosamente.');
+    DBMS_OUTPUT.PUT_LINE('Descuentos finalizados');
 END;
-
 /
+
 
 --Script 4: listar todas las direcciones de un usuario
 
 DECLARE
-
-    v_cliente USUARIOS.NOMBRE_USUARIO%TYPE;
-
+    v_cliente USUARIOS.nombre_usuario%TYPE;
+    
     CURSOR c_direcciones IS
         SELECT d.calle_nombre, c.nombre_comuna, r.nombre_region
         FROM USUARIOS_DOMICILIO ud
@@ -86,45 +80,39 @@ DECLARE
         JOIN COMUNA c ON d.id_comuna = c.id
         JOIN REGION r ON c.id_region = r.id
         WHERE ud.id_usuario = 1;
-    
-
 BEGIN
-
     SELECT nombre_usuario INTO v_cliente FROM USUARIOS WHERE id = 1;
-
-    DBMS_OUTPUT.PUT_LINE('--- Direcciones de envio de : '||v_cliente||' ---');
+    DBMS_OUTPUT.PUT_LINE('Direcciones de: '|| v_cliente);
 
     FOR d IN c_direcciones LOOP
-
-        DBMS_OUTPUT.PUT_LINE('Calle: ' || d.calle_nombre);
-        DBMS_OUTPUT.PUT_LINE('Ubicacion: ' || d.nombre_comuna||','||d.nombre_region);
-        DBMS_OUTPUT.PUT_LINE('------------------------------');
-
+        DBMS_OUTPUT.PUT_LINE(d.calle_nombre || ', ' || d.nombre_comuna);
+        DBMS_OUTPUT.PUT_LINE('Región: ' || d.nombre_region);
+        DBMS_OUTPUT.PUT_LINE('--------------------');
     END LOOP;
-
 END;
 /
 
-
---Script 5: finalizar compra
 
 DECLARE
     v_carrito_id NUMBER := 1;
-    v_prod_comprado NUMBER := 7; 
+    v_prod_id NUMBER := 7; 
+    v_cant NUMBER := 1;
 BEGIN
-    
+    -- 1. Cerrar Carrito
     UPDATE CARRITO SET estado = 'Pagado' WHERE id = v_carrito_id;
-
     
+    -- 2. Histórico (Tabla CARRITO_PRODUCTO)
     INSERT INTO CARRITO_PRODUCTO (id_carrito, id_producto, cantidad) 
-    VALUES (v_carrito_id, v_prod_comprado, 1);
-    COMMIT; 
+    VALUES (v_carrito_id, v_prod_id, v_cant);
 
-    
-    DBMS_OUTPUT.PUT_LINE('Pedido pagado y actualizado con éxito.');
+
+    UPDATE PRODUCTO SET stock = stock - v_cant 
+    WHERE id = v_prod_id;
+
+    COMMIT; 
+    DBMS_OUTPUT.PUT_LINE('Stock descontado y compra registrada.');
 END;
 /
-
 
 --SCRIPT 6: Mostrar los 5 productos mas caros
 

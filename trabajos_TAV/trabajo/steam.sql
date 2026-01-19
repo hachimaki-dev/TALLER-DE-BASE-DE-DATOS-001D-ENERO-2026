@@ -78,18 +78,11 @@ BEGIN
             WHERE id_usuario = v_usuario_id AND id_juego = v_juego_id;
             DBMS_OUTPUT.PUT_LINE('Llevas ' || v_horas_actuales || ' horas jugadas.');
             COMMIT;
-
-
         END;
-
-        
-
     END LOOP;
-
 END; 
 /
 --Script 4: Listar todos los juegos de un genero en especifico
-
 DECLARE
     v_nombre_genero GENEROS.nombre_genero%TYPE;
     CURSOR c_juegos_genero IS
@@ -99,7 +92,6 @@ DECLARE
         JOIN GENEROS g ON jg.id_genero = g.id
         WHERE g.id = 1;
 BEGIN
-
     SELECT nombre_genero into v_nombre_genero from generos where id=1;
     DBMS_OUTPUT.PUT_LINE('--- Juegos de '||v_nombre_genero||' ---');
     FOR j IN c_juegos_genero LOOP
@@ -109,23 +101,34 @@ END;
 / 
 
 
---SCRIPT 5: Simular una compra
-
+-- SCRIPT 5: Compra segura
 DECLARE
-
     v_user_id NUMBER := 1;
     v_game_id NUMBER := 3;
     v_precio NUMBER;
-
+    v_saldo_actual NUMBER;
 BEGIN
+    
     SELECT precio INTO v_precio FROM JUEGOS WHERE id = v_game_id;
+    SELECT saldo_cartera INTO v_saldo_actual FROM USUARIOS WHERE id = v_user_id;
 
-    UPDATE USUARIOS SET saldo_cartera = saldo_cartera - v_precio WHERE id = v_user_id;
+    IF v_saldo_actual >= v_precio THEN
+    
+        UPDATE USUARIOS 
+        SET saldo_cartera = saldo_cartera - v_precio 
+        WHERE id = v_user_id;
 
-    INSERT INTO BIBLIOTECA_USUARIO (id_usuario, id_juego) VALUES (v_user_id, v_game_id);
+        INSERT INTO BIBLIOTECA_USUARIO (id_usuario, id_juego) 
+        VALUES (v_user_id, v_game_id);
 
-    COMMIT; 
-    DBMS_OUTPUT.PUT_LINE('Compra realizada con éxito.');
+        COMMIT; 
+        DBMS_OUTPUT.PUT_LINE('Compra realizada con éxito. Nuevo saldo: ' || (v_saldo_actual - v_precio));
+        
+    ELSE
+        
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error: Saldo insuficiente. Tienes: ' || v_saldo_actual || ' y necesitas: ' || v_precio);
+    END IF;
 END;
 /
 
@@ -135,7 +138,7 @@ DECLARE
 
     TYPE t_resumen IS RECORD(
         nombre USUARIOS.NOMBRE_USUARIO%TYPE,
-        pais VARCHAR2(100),
+        pais PAIS.NOMBRE%TYPE,
         saldo USUARIOS.SALDO_CARTERA%TYPE
     );
 

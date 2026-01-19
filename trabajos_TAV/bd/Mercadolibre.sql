@@ -25,7 +25,8 @@ CREATE TABLE PRODUCTO(
     descripcion_producto VARCHAR2(250),
     valor_producto NUMBER(10,2)NOT NULL,
     tamano_producto VARCHAR2(10),
-    id_categoria REFERENCES CATEGORIAS(id) NOT NULL
+    id_categoria REFERENCES CATEGORIAS(id) NOT NULL,
+    stock NUMBER
 );
 
 CREATE TABLE TIPO_TARJETAS(
@@ -124,34 +125,34 @@ INSERT INTO CATEGORIAS (nombre_categoria, descripcion_categoria) VALUES ('Mascot
 INSERT INTO CATEGORIAS (nombre_categoria, descripcion_categoria) VALUES ('Música', 'Instrumentos y accesorios musicales');
 
 -- INSERTS PRODUCTO
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Notebook HP', 'Laptop HP Pavilion 15.6 pulgadas', 599990.00, NULL, 1);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Notebook HP', 'Laptop HP Pavilion 15.6 pulgadas', 599990.00, NULL, 1, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Polera Nike', 'Polera deportiva Nike Dri-Fit', 29990.00, 'M', 2);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Polera Nike', 'Polera deportiva Nike Dri-Fit', 29990.00, 'M', 2, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Cafetera Oster', 'Cafetera eléctrica 12 tazas', 45990.00, NULL, 3);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Cafetera Oster', 'Cafetera eléctrica 12 tazas', 45990.00, NULL, 3, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Balón Fútbol', 'Balón profesional Adidas', 34990.00, NULL, 4);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Balón Fútbol', 'Balón profesional Adidas', 34990.00, NULL, 4, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Harry Potter', 'Libro Harry Potter y la piedra filosofal', 12990.00, NULL, 5);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Harry Potter', 'Libro Harry Potter y la piedra filosofal', 12990.00, NULL, 5, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Lego Classic', 'Set de construcción Lego 500 piezas', 39990.00, NULL, 6);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Lego Classic', 'Set de construcción Lego 500 piezas', 39990.00, NULL, 6, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Aceite Oliva', 'Aceite de oliva extra virgen 1L', 8990.00, NULL, 7);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Aceite Oliva', 'Aceite de oliva extra virgen 1L', 8990.00, NULL, 7, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Shampoo Dove', 'Shampoo reparación total 400ml', 5990.00, NULL, 8);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Shampoo Dove', 'Shampoo reparación total 400ml', 5990.00, NULL, 8, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
-VALUES ('Alimento Perros', 'Alimento premium perros adultos 15kg', 45990.00, NULL, 9);
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
+VALUES ('Alimento Perros', 'Alimento premium perros adultos 15kg', 45990.00, NULL, 9, 10);
 
-INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria) 
+INSERT INTO PRODUCTO (nombre_producto, descripcion_producto, valor_producto, tamano_producto, id_categoria, stock) 
 VALUES ('Guitarra Yamaha', 'Guitarra acústica Yamaha C40', 129990.00, NULL, 10);
 
 COMMIT;
