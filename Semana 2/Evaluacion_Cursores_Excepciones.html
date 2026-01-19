@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Cursores y Excepciones - Taller de Base de Datos</title>
+    <style>
+        :root {
+            --primary-color: #8E44AD;
+            /* Purple for this new unit */
+            --secondary-color: #9B59B6;
+            --accent-color: #f4ecf7;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #ddd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #c0392b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.2em;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .theme-box {
+            background-color: var(--accent-color);
+            border: 1px solid var(--secondary-color);
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .theme-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .theme-item {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 5px;
+        }
+
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #d63384;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .important-note {
+            background-color: #fff3cd;
+            border-left: 5px solid var(--warning-color);
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .danger-note {
+            background-color: #fadbd8;
+            border-left: 5px solid var(--danger-color);
+            padding: 15px;
+            margin-top: 20px;
+            color: #78281f;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--light-text);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Evaluación: Cursores y Excepciones</h1>
+            <p>Auditoría Cruzada y Lógica Robusta PL/SQL</p>
+        </header>
+
+        <section>
+            <h2>Descripción de la Actividad</h2>
+            <p>En esta evaluación, continuaremos trabajando sobre los proyectos de base de datos (Crunchyroll,
+                MercadoLibre, Steam), pero con un giro fundamental: <strong>La Auditoría Cruzada</strong>.</p>
+            <p>Ya no trabajarán sobre su propia base de datos. Deberán conectarse a la base de datos de un compañero,
+                analizar su estructura y crear bloques PL/SQL avanzados para auditar, migrar o generar reportes
+                complejos utilizando <strong>Cursores</strong> y asegurando la integridad con el manejo de
+                <strong>Excepciones</strong>.
+            </p>
+
+            <div class="danger-note">
+                <strong>Cambio de Reglas:</strong> Todo el desarrollo debe realizarse sobre el esquema de base de datos
+                de un compañero. ¡Coordine con su par para obtener accesos y comprender su modelo de datos!
+            </div>
+        </section>
+
+        <section>
+            <h2>Requerimientos de la Entrega</h2>
+
+            <h3>1. Análisis y Adaptación (Auditoría)</h3>
+            <p>Antes de codificar, deben analizar el modelo de datos de su compañero. En su presentación deben explicar:
+            </p>
+            <ul>
+                <li>Qué tablas o procesos seleccionaron para trabajar.</li>
+                <li>Si encontraron errores de diseño o normalización (y cómo los manejaron en su código).</li>
+                <li>Cómo adaptaron su lógica a una estructura ajena.</li>
+            </ul>
+
+            <h3>2. Programación PL/SQL Avanzada</h3>
+            <p>Deben implementar scripts PL/SQL que resuelvan una problemática de negocio (Ej: Recalcular totales,
+                migrar datos históricos, generar reportes de auditoría, procesar colas de envíos, etc.).</p>
+
+            <h4>2.1 Uso de Cursores (Procesamiento de Lotes)</h4>
+            <p>Es obligatorio implementar al menos DOS de los siguientes mecanismos de cursores:</p>
+            <ul>
+                <li><strong>Cursor Explícito:</strong> Declaración, apertura, fetch y cierre manual para un control
+                    total.</li>
+                <li><strong>Cursor FOR LOOP:</strong> Iteración simplificada para recorrido de registros.</li>
+                <li><strong>Cursor con Parámetros:</strong> Reutilización de lógica de cursor para diferentes criterios.
+                </li>
+            </ul>
+            <p>Cada cursor debe procesar múltiples filas y realizar alguna operación lógica (no solo imprimir).</p>
+
+            <h4>2.2 Manejo de Excepciones (Robustez)</h4>
+            <p>El código NO debe fallar abruptamente. Deben capturar y gestionar errores:</p>
+            <ul>
+                <li><strong>Excepciones Predefinidas:</strong> <code>NO_DATA_FOUND</code>, <code>TOO_MANY_ROWS</code>,
+                    <code>DUP_VAL_ON_INDEX</code>, etc.
+                </li>
+                <li><strong>Excepciones Definidas por el Usuario:</strong> Crear sus propias excepciones para reglas de
+                    negocio (ej: <code>SALDO_INSUFICIENTE</code>, <code>STOCK_AGOTADO</code>).</li>
+
+            </ul>
+
+            <div class="important-note">
+                <strong>Nota Importante:</strong> Se evaluará la creatividad en la solución. Un simple <code>LOOP</code>
+                que imprime nombres no es suficiente. Deben modificar datos, insertar en tablas de log o realizar
+                cálculos complejos fila por fila.
+            </div>
+        </section>
+
+        <section>
+            <h2>Pauta de Evaluación (Rúbrica)</h2>
+            <p><strong>Ponderación Total:</strong> 100%</p>
+
+            <h3>A. Presentación y Defensa (40%)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Criterio</th>
+                        <th>Descripción</th>
+                        <th style="width: 10%;">Puntaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Análisis de Terceros</strong></td>
+                        <td>Explica claramente la estructura de la BD del compañero y el desafío enfrentado al no ser su
+                            propio código.</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Defensa Técnica</strong></td>
+                        <td>Justifica por qué usó un Cursor específico o una Excepción. Responde correctamente preguntas
+                            conceptuales.</td>
+                        <td>15%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Calidad del Material</strong></td>
+                        <td>Presentación clara, diagramas explicativos del flujo del cursor y manejo de errores.</td>
+                        <td>10%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>B. Contenido Técnico (60%)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Criterio</th>
+                        <th>Descripción</th>
+                        <th style="width: 10%;">Puntaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Uso de Cursores</strong></td>
+                        <td>Implementación correcta y eficiente de cursores. Itera correctamente sobre conjuntos de
+                            datos.</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Manejo de Excepciones</strong></td>
+                        <td>Captura errores correctamente. El programa no se cae "feo". Implementa lógica de
+                            recuperación o mensaje amigable.</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Excepciones Personalizadas</strong></td>
+                        <td>Define y levanta (RAISE) excepciones propias para validar reglas de negocio específicas.
+                        </td>
+                        <td>10%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Impacto en BD (Cross-Schema)</strong></td>
+                        <td>El código efectivamente interactúa con las tablas del compañero (Select/Insert/Update).</td>
+                        <td>10%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Entregables</h2>
+            <ol>
+                <li><strong>Script SQL/PLSQL:</strong> Archivo <code>.sql</code> con los bloques anónimos o
+                    procedimientos creados. Debe incluir comentarios explicando qué hace cada sección.</li>
+                <li><strong>Presentación:</strong> PPT o PDF usado para la defensa.</li>
+            </ol>
+        </section>
+
+        <footer>
+            <p>Taller de Base de Datos - Enero 2026</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>

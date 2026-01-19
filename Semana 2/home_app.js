@@ -40,6 +40,15 @@ createApp({
                 previewText: "Asegura la integridad de tus datos manejando errores inesperados y reglas de negocio."
             },
             {
+                id: 7,
+                title: "EVALUACIÓN S3",
+                subtitle: "Cursores y Excepciones",
+                url: "Evaluacion_Cursores_Excepciones.html",
+                color: "#8E44AD",
+                image: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop')",
+                previewText: "Defensa de auditoría cruzada usando Cursores y Excepciones en BD de terceros."
+            },
+            {
                 id: 5,
                 title: "PL/SQL: DESAFÍOS",
                 subtitle: "Resumen y Taller Final",
