@@ -32,12 +32,30 @@ createApp({
             },
             {
                 id: 4,
+                title: "PL/SQL: EXCEPCIONES",
+                subtitle: "Integridad y Failsafes",
+                url: "PLSQL_Exceptions/taller.html",
+                color: "#c53030", // Professional red
+                image: "url('https://images.unsplash.com/photo-1590494165264-1ebe3602eb80?q=80&w=2070&auto=format&fit=crop')", // Warning/Error concept
+                previewText: "Asegura la integridad de tus datos manejando errores inesperados y reglas de negocio."
+            },
+            {
+                id: 5,
                 title: "PL/SQL: DESAFÍOS",
                 subtitle: "Resumen y Taller Final",
                 url: "PLSQL_Challenges/taller.html",
                 color: "#18a0fb", // Blue/Azure
                 image: "url('https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?q=80&w=2070&auto=format&fit=crop')", // Placeholder code/laptop image
                 previewText: "Aplica todo lo aprendido en tu proyecto de Steam, Crunchyroll o MercadoLibre."
+            },
+            {
+                id: 6,
+                title: "PL/SQL: MEGA PRACTICE",
+                subtitle: "Peer-to-Peer Lab",
+                url: "PLSQL_Workshop_Lab/taller.html",
+                color: "#6B2FD9", // Purple
+                image: "url('https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=2070&auto=format&fit=crop')", // Placeholder code/collaboration image
+                previewText: "Crea procedimientos complejos hackeando las bases de datos de tus compañeros."
             }
         ]);
 

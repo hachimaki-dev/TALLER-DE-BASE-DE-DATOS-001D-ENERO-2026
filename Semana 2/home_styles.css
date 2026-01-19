@@ -118,7 +118,8 @@ body {
     flex-direction: column;
     justify-content: center;
     padding-left: 5%;
-    gap: 1.5rem;
+    gap: 0.8rem;
+    /* Reduced from 1.5rem */
     position: relative;
 }
 
@@ -138,9 +139,11 @@ body {
 .menu-item {
     background: var(--p5-black);
     color: var(--p5-white);
-    padding: 1.5rem 3rem;
+    padding: 0.8rem 3rem;
+    /* Reduced from 1.5rem */
     font-family: 'Anton', sans-serif;
-    font-size: 2rem;
+    font-size: 1.8rem;
+    /* Reduced from 2rem */
     text-transform: uppercase;
     transform: skewX(-15deg) translateX(0);
     border: 3px solid var(--p5-white);
@@ -188,10 +191,11 @@ body {
 
 .menu-number {
     font-family: 'Bangers', cursive;
-    font-size: 3rem;
+    font-size: 2.5rem;
+    /* Reduced from 3rem */
     position: absolute;
-    left: -20px;
-    top: -20px;
+    left: -15px;
+    top: -15px;
     color: var(--p5-red);
     text-shadow: 2px 2px 0 var(--p5-white);
     transform: rotate(-10deg);
