@@ -21,6 +21,7 @@ DROP TABLE GENEROS CASCADE CONSTRAINTS;
 DROP TABLE CLASIFICACIONES_DETALLE CASCADE CONSTRAINTS;
 DROP TABLE SISTEMAS_CLASIFICACION CASCADE CONSTRAINTS;
 DROP TABLE PAIS CASCADE CONSTRAINTS;
+--AÑADIR TABLA CATEGORIAS
 
 
 -- ============================================================================
@@ -1333,96 +1334,128 @@ BEGIN
 END;
 /
 
----EJERCICIO DE BOOS
 
+SELECT * FROM BIBLIOTECA_USUARIO;
+SELECT * FROM JUEGOS;
+SELECT * FROM USUARIOS;
+--- Compra Segura ---
 DECLARE
-    v_id_usuario   USUARIOS.id%TYPE := 1;
-    v_id_juego     JUEGOS.id%TYPE := 1;
-    v_saldo        USUARIOS.saldo_cartera%TYPE;
-    v_existe       NUMBER;
-    v_intentos     NUMBER := 1;
+    v_id_usuario USUARIOS.id%TYPE := 1;
+    v_id_juego JUEGOS.id%TYPE := 3;
+    v_precio_real JUEGOS.precio%TYPE;
+    v_precio_input NUMBER := 59.99;
+    v_saldo USUARIOS.saldo_cartera%TYPE;
+    e_precio_manipulado  EXCEPTION;
+    e_saldo_insuficiente EXCEPTION;
+    e_juego_ya_comprado  EXCEPTION;
 
-    TYPE t_juego IS RECORD (
-        nombre  JUEGOS.nombre%TYPE,
-        precio  JUEGOS.precio%TYPE
-    );
-    v_juego t_juego;
-
-    CURSOR c_biblioteca IS
-        SELECT j.nombre
-        FROM BIBLIOTECA_USUARIO b
-        INNER JOIN JUEGOS j ON b.id_juego = j.id
-        WHERE b.id_usuario = v_id_usuario;
+    CURSOR c_biblioteca IS SELECT id_juego FROM BIBLIOTECA_USUARIO WHERE id_usuario = v_id_usuario;
 
 BEGIN
-    WHILE v_intentos <= 3 LOOP
+    SELECT saldo_cartera INTO v_saldo FROM USUARIOS WHERE id = v_id_usuario;
 
-        SELECT saldo_cartera
-        INTO v_saldo
-        FROM USUARIOS
-        WHERE id = v_id_usuario;
+    SELECT precio INTO v_precio_real FROM JUEGOS WHERE id = v_id_juego;
 
-        SELECT nombre, precio
-        INTO v_juego
-        FROM JUEGOS
-        WHERE id = v_id_juego;
+    IF v_precio_input <> v_precio_real THEN 
 
-        IF v_saldo < v_juego.precio THEN
-            DBMS_OUTPUT.PUT_LINE('Intento ' || v_intentos || ': Saldo insuficiente');
-            v_intentos := v_intentos + 1;
+        RAISE e_precio_manipulado;
 
-        ELSE
-            DBMS_OUTPUT.PUT_LINE('Saldo suficiente');
-            SELECT COUNT(*)
-            INTO v_existe
-            FROM BIBLIOTECA_USUARIO
-            WHERE id_usuario = v_id_usuario
-              AND id_juego = v_id_juego;
+    ELSIF v_saldo < v_precio_real THEN 
 
-            IF v_existe > 0 THEN
-                DBMS_OUTPUT.PUT_LINE('El usuario ya posee el juego');
-                EXIT;
-            END IF;
+        RAISE e_saldo_insuficiente;
 
-            INSERT INTO TRANSACCIONES (
-                id_usuario,
-                id_juego,
-                monto_pagado
-            ) VALUES (
-                v_id_usuario,
-                v_id_juego,
-                v_juego.precio
-            );
+    END IF;
 
-            INSERT INTO BIBLIOTECA_USUARIO (
-                id_usuario,
-                id_juego
-            ) VALUES (
-                v_id_usuario,
-                v_id_juego
-            );
+    FOR r IN c_biblioteca LOOP 
+        IF r.id_juego=v_id_juego THEN 
+            RAISE e_juego_ya_comprado;
+        END IF;
+    END LOOP;
 
-            UPDATE USUARIOS
-            SET saldo_cartera = saldo_cartera - v_juego.precio
-            WHERE id = v_id_usuario;
+    INSERT INTO TRANSACCIONES (id_usuario, id_juego, monto_pagado) 
+    VALUES (v_id_usuario, v_id_juego, v_precio_real);
 
-            COMMIT;
+    INSERT INTO BIBLIOTECA_USUARIO(id_usuario, id_juego)
+    VALUES (v_id_usuario, v_id_juego);
 
-            DBMS_OUTPUT.PUT_LINE('Compra realizada con éxito');
+    UPDATE USUARIOS SET saldo_cartera= saldo_cartera - v_precio_real
+    WHERE id = v_id_usuario;
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Compra realizada correctamente');
+
+EXCEPTION
+    WHEN e_precio_manipulado THEN 
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE('ERROR: manipulacion de precio del ID_usuario= '||v_id_usuario||', precio ingresado = ' || v_precio_input);
+
+    WHEN e_juego_ya_comprado THEN
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE('ERROR: Juego ya comprado ='||v_id_juego);
+
+    WHEN e_saldo_insuficiente THEN
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE('ERROR: Saldo insuficiente para comprar el juego de id='||v_id_juego);
+
+    WHEN NO_DATA_FOUND THEN
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE('ERROR: Usuario o juego no existe; ID_usuario= '||v_id_usuario||'ID_juego= '||v_id_juego);
+
+    WHEN DUP_VAL_ON_INDEX THEN
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE('ERROR: Valores ya existen en la base de datos.');
+
+    WHEN OTHERS THEN
+    ROLLBACK;
+    DBMS_OUTPUT.PUT_LINE('ERROR INESPERADO');
+
+END;
+/
+
+SELECT * FROM BIBLIOTECA_USUARIO;
+DECLARE
+    v_id_usuario USUARIOS.id%TYPE := 1;
+    v_id_juego   JUEGOS.id%TYPE   := 10;
+    v_encontrado BOOLEAN := FALSE;
+    e_juego_no_comprado EXCEPTION;
+
+    CURSOR c_biblioteca (p_usuario NUMBER) IS
+        SELECT id_juego
+        FROM BIBLIOTECA_USUARIO
+        WHERE id_usuario = p_usuario;
+
+BEGIN
+    FOR r IN c_biblioteca(v_id_usuario) LOOP
+        IF r.id_juego = v_id_juego THEN
+            v_encontrado := TRUE;
             EXIT;
         END IF;
     END LOOP;
 
-    DBMS_OUTPUT.PUT_LINE('--- Biblioteca del usuario ---');
-    FOR r IN c_biblioteca LOOP
-        DBMS_OUTPUT.PUT_LINE('Juego: ' || r.nombre);
-    END LOOP;
+    IF NOT v_encontrado THEN
+        RAISE e_juego_no_comprado;
+    END IF;
+
+    INSERT INTO RESENAS (id_usuario, id_juego, texto_resena, recomendado)
+    VALUES (v_id_usuario, v_id_juego, 'Buen juego', 'SI');
+
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('Reseña registrada correctamente');
 
 EXCEPTION
+    WHEN e_juego_no_comprado THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE(
+            'ERROR: El usuario no posee el juego. ID_JUEGO=' || v_id_juego
+        );
+
     WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('Usuario o juego no encontrado');
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('ERROR: Usuario o juego no existe');
+
     WHEN OTHERS THEN
         ROLLBACK;
-        DBMS_OUTPUT.PUT_LINE('Error inesperado: ' || SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('ERROR inesperado: ' || SQLERRM);
 END;
 /
