@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensa MercadoLibre - Taller BD</title>
+    <style>
+        :root {
+            --ml-yellow: #ffe600;
+            --ml-blue: #2d3277;
+            --dark-bg: #1a1a1a;
+            --text-light: #f5f5f5;
+            --code-bg: #282c34;
+            --accent: #00a650;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .slide-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            display: none;
+            width: 80%;
+            max-width: 1200px;
+            height: 85%;
+            background: linear-gradient(145deg, #232323, #1e1e1e);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-top: 5px solid var(--ml-yellow);
+            animation: fadeIn 0.5s ease;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--ml-yellow);
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            color: var(--ml-yellow);
+            border-bottom: 2px solid var(--ml-blue);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        p, li {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        .feature-box {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid var(--accent);
+            margin-top: 20px;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent);
+            margin: 10px 0;
+            color: #abb2bf;
+        }
+
+        .highlight { color: #e5c07b; }
+        .keyword { color: #c678dd; }
+        .string { color: #98c379; }
+        .function { color: #61afef; }
+        .comment { color: #5c6370; font-style: italic; }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background-color: var(--ml-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--ml-yellow);
+            color: var(--ml-blue);
+        }
+
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: var(--ml-yellow);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            background: var(--ml-blue);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress" id="progressBar"></div>
+
+    <div class="slide-container">
+
+        <div class="slide active">
+            <div style="text-align: center; margin-top: auto; margin-bottom: auto;">
+                <p style="color: var(--accent); letter-spacing: 2px;">EVALUACIÓN SEMANA 2</p>
+                <h1>Defensa de Proyecto:<br>MercadoLibre</h1>
+                <p>Diseño de Base de Datos y Lógica de Negocio</p>
+                <div style="margin-top: 40px;">
+                    <span class="tag">Oracle SQL</span>
+                    <span class="tag">PL/SQL Avanzado</span>
+                    <span class="tag">Modelo 3FN</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>1. Diseño del Modelo de Datos</h2>
+            <p>El esquema de base de datos ha sido diseñado para garantizar la integridad, reducir redundancias y facilitar la auditoría de transacciones.</p>
+            
+            <div class="feature-box">
+                <h3>Características Principales del Modelo</h3>
+                <ul>
+                    <li><strong>Normalización (3FN):</strong> Todas las tablas se encuentran normalizadas para asegurar dependencias funcionales correctas y atomicidad de datos.</li>
+                    <li><strong>Sistema de Auditoría:</strong> Incorporación de una tabla <code>LOG</code> para el registro histórico de operaciones críticas y errores.</li>
+                </ul>
+            </div>
+
+            <div class="feature-box" style="border-left-color: var(--ml-yellow);">
+                <h3>Optimizaciones Específicas</h3>
+                <ul>
+                    <li><strong>Simplificación Transaccional:</strong> Se realizó la <strong>eliminación de la tabla <code>productos_carrito</code></strong> para optimizar el flujo de datos.</li>
+                    <li><strong>Integridad de Datos:</strong> El campo <code>tipo_tarjeta</code> se ha definido como <strong>UNIQUE</strong> para evitar duplicidad en la categorización de métodos de pago.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>2. Lógica de Negocio: Validación de Stock</h2>
+            <p>Implementación robusta mediante <strong>Cursores y Manejo de Excepciones</strong> para asegurar que no se vendan productos sin inventario.</p>
+            
+            <div class="code-block">
+<span class="keyword">DECLARE</span>
+    STOCK_INSUFICIENTE <span class="keyword">EXCEPTION</span>;
+<span class="keyword">BEGIN</span>
+    <span class="comment">-- Recorrido masivo de carritos activos</span>
+    <span class="keyword">FOR</span> r <span class="keyword">IN</span> (<span class="keyword">SELECT</span> ... <span class="keyword">FROM</span> DETALLE_CARRITO ...) <span class="keyword">LOOP</span>
+        <span class="keyword">BEGIN</span>
+            <span class="comment">-- Validación Crítica</span>
+            <span class="keyword">IF</span> r.stock < r.cantidad <span class="keyword">THEN</span> 
+                <span class="keyword">RAISE</span> STOCK_INSUFICIENTE; 
+            <span class="keyword">END IF</span>;
+            
+            <span class="comment">-- Registro de éxito en LOG</span>
+            <span class="keyword">INSERT INTO</span> LOG (...) <span class="keyword">VALUES</span> ('VALIDACION_OK', ...);
+        <span class="keyword">EXCEPTION</span>
+            <span class="keyword">WHEN</span> STOCK_INSUFICIENTE <span class="keyword">THEN</span>
+                <span class="keyword">INSERT INTO</span> LOG (...) <span class="keyword">VALUES</span> ('ERROR_STOCK', ...);
+        <span class="keyword">END</span>;
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>3. Reportes y Auditoría Automática</h2>
+            <p>El sistema no solo procesa datos, sino que genera trazabilidad automática mediante procedimientos almacenados.</p>
+            
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <h3>Funcionalidad</h3>
+                    <ul>
+                        <li><strong>Reutilización de Código:</strong> Uso de Procedures internos para procesar diferentes estados ('Activo', 'Pagado', 'Enviado').</li>
+                        <li><strong>Persistencia:</strong> Los resultados del reporte financiero se guardan automáticamente en la tabla de auditoría.</li>
+                    </ul>
+                </div>
+                <div style="flex: 1;">
+                    <h3>Implementación PL/SQL</h3>
+                    <div class="code-block" style="font-size: 0.85em;">
+<span class="keyword">PROCEDURE</span> procesar_estado(...) <span class="keyword">IS</span>
+<span class="keyword">BEGIN</span>
+   <span class="comment">-- Cálculo de totales</span>
+   <span class="keyword">LOOP</span> ... <span class="keyword">END LOOP</span>;
+   
+   <span class="comment">-- Inserción en tabla LOG</span>
+   <span class="keyword">INSERT INTO</span> LOG (tipo_operacion, descripcion)
+   <span class="keyword">VALUES</span> ('REPORTE', p_estado || ': $' || v_suma);
+<span class="keyword">END</span>;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div style="text-align: center; margin-top: auto; margin-bottom: auto;">
+                <h2>Resumen del Proyecto</h2>
+                <ul style="list-style: none; padding: 0;">
+                    <li>✅ Modelo en 3ra Forma Normal (3FN)</li>
+                    <li>✅ Reglas de Negocio "Fail-Safe" (Excepciones)</li>
+                    <li>✅ Auditoría y Trazabilidad (Tabla Log)</li>
+                    <li>✅ Optimización de Entidades</li>
+                </ul>
+                <h1 style="margin-top: 50px; color: var(--accent);">¡Gracias por su atención!</h1>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button onclick="changeSlide(-1)">❮ Anterior</button>
+        <button onclick="changeSlide(1)">Siguiente ❯</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function changeSlide(direction) {
+            slides[currentSlide].classList.remove('active');
+            
+            currentSlide += direction;
+
+            if (currentSlide >= slides.length) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = slides.length - 1;
+            }
+
+            slides[currentSlide].classList.add('active');
+            updateProgress();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        updateProgress();
+    </script>
+</body>
+</html>
