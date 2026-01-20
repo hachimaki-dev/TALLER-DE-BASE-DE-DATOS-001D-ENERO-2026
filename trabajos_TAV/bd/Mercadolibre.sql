@@ -124,9 +124,6 @@ CREATE TABLE LOG(
 
 COMMIT;
 
--- =====================================================
--- 3. INSERCIÓN DE DATOS (CORREGIDO)
--- =====================================================
 
 -- CATEGORIAS
 INSERT INTO CATEGORIAS (nombre_categoria, descripcion_categoria) VALUES ('Electrónica', 'Productos electrónicos y tecnología');
@@ -232,4 +229,3 @@ INSERT INTO USUARIOS_DOMICILIO (id_direccion, id_usuario) VALUES (4, 4);
 INSERT INTO USUARIOS_DOMICILIO (id_direccion, id_usuario) VALUES (5, 5);
 
 COMMIT;
-SELECT 'BD CREADA EXITOSAMENTE' AS MENSAJE FROM DUAL;
