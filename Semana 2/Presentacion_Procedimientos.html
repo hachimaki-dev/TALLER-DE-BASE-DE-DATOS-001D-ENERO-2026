@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL/SQL: PROCEDIMIENTOS Y TRIGGERS</title>
+
+    <!-- Fonts: Bangers (Comic), Anton (Impact), Roboto (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Roboto:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-purple': '#6B2FD9',
+                        'brand-cyan': '#00E0FF',
+                        'brand-orange': '#F2994A',
+                        'brand-yellow': '#F2C94C',
+                        'brand-pink': '#FF0080',
+                    },
+                    fontFamily: {
+                        'bangers': ['Bangers', 'cursive'],
+                        'anton': ['Anton', 'sans-serif'],
+                        'roboto': ['Roboto', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'hard': '8px 8px 0px 0px #000000',
+                        'solid-sm': '4px 4px 0px 0px #000000',
+                        'solid-md': '6px 6px 0px 0px #000000',
+                        'solid-lg': '8px 8px 0px 0px #000000',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Prism.js for Syntax Highlighting (Tomorrow Night) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-plsql.min.js"></script>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .bg-pattern {
+            background-color: #f3f4f6;
+            background-image: radial-gradient(#6B2FD9 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .bg-halftone {
+            background-image: radial-gradient(circle, #000000 2px, transparent 2.5px);
+            background-size: 10px 10px;
+            opacity: 0.1;
+        }
+
+        .text-stroke-white {
+            -webkit-text-stroke: 2px white;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6B2FD9;
+            border: 2px solid #1a1a1a;
+        }
+
+        /* Slide Transitions */
+        .pop-transition-enter-active,
+        .pop-transition-leave-active {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pop-transition-enter-from,
+        .pop-transition-leave-to {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+    </style>
+</head>
+
+<body class="bg-pattern overflow-hidden font-roboto">
+    <div id="app" class="h-screen w-screen flex flex-col relative" v-cloak>
+
+        <!-- Background Decor -->
+        <div class="fixed inset-0 z-0 bg-halftone pointer-events-none"></div>
+
+        <!-- Header -->
+        <header
+            class="relative z-20 w-full p-4 md:p-6 flex justify-between items-center bg-black/90 border-b-4 border-brand-pink shadow-hard">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-14 h-14 bg-brand-pink border-4 border-black skew-x-[-10deg] flex items-center justify-center shadow-solid-sm">
+                    <ion-icon name="layers" class="text-white text-3xl skew-x-[10deg]"></ion-icon>
+                </div>
+                <!-- Back Link -->
+                <a href="index.html" class="absolute top-2 left-2 text-xs text-gray-500 hover:text-white z-50">Back to
+                    Main</a>
+
+                <div class="skew-x-[-5deg]">
+                    <h1 class="text-4xl font-bangers text-white uppercase tracking-wider leading-none">
+                        PL/SQL <span class="text-brand-pink">ADVANCED</span>
+                    </h1>
+                    <p class="text-sm font-bold bg-brand-cyan text-black px-2 mt-1 inline-block">PROCEDURES & TRIGGERS
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- Counter -->
+                <div class="hidden md:flex flex-col items-end skew-x-[-5deg]">
+                    <span class="text-xs font-black text-brand-pink uppercase">TOPIC</span>
+                    <span class="text-2xl font-anton text-white">{{ pad(currentSlideIndex + 1) }} <span
+                            class="text-slate-500">/</span> {{ pad(slides.length) }}</span>
+                </div>
+
+                <!-- Nav -->
+                <div class="flex gap-2">
+                    <button @click="prevSlide" :disabled="currentSlideIndex === 0"
+                        class="w-12 h-12 flex items-center justify-center border-4 border-black bg-white text-black hover:bg-brand-yellow hover:scale-110 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-white shadow-solid-sm">
+                        <ion-icon name="caret-back-outline" class="text-xl"></ion-icon>
+                    </button>
+                    <button @click="nextSlide" :disabled="currentSlideIndex === slides.length - 1"
+                        class="w-12 h-12 flex items-center justify-center border-4 border-black bg-black text-brand-pink hover:bg-brand-pink hover:text-black hover:scale-110 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-black disabled:hover:text-brand-pink shadow-solid-sm">
+                        <ion-icon name="caret-forward-outline" class="text-xl"></ion-icon>
+                    </button>
+                    <button @click="toggleMenu"
+                        class="w-12 h-12 flex items-center justify-center border-4 border-black bg-brand-purple text-white hover:bg-brand-purple/80 hover:rotate-6 transition-all shadow-solid-sm">
+                        <ion-icon name="apps-outline" class="text-xl"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8 overflow-hidden">
+            <transition name="pop-transition" mode="out-in">
+
+                <div :key="currentSlideIndex" class="w-full max-w-[90rem] h-full flex flex-col relative">
+
+                    <!-- Title Banner -->
+                    <div class="mb-6 relative z-10">
+                        <span
+                            class="absolute -top-4 -left-2 bg-brand-yellow text-black border-4 border-black px-4 py-1 font-bangers text-xl shadow-solid-sm rotate-[-2deg] z-20">
+                            {{ currentSlide.section }}
+                        </span>
+                        <h2
+                            class="text-4xl md:text-6xl font-anton text-stroke-white text-black uppercase relative z-10 pointer-events-none">
+                            {{ currentSlide.title }}
+                        </h2>
+                        <h2
+                            class="text-4xl md:text-6xl font-anton text-brand-pink absolute top-1 left-1 -z-0 pointer-events-none">
+                            {{ currentSlide.title }}
+                        </h2>
+                    </div>
+
+                    <!-- Card -->
+                    <div
+                        class="flex-1 min-h-0 border-4 border-black shadow-solid-lg p-6 md:p-8 relative overflow-y-auto custom-scrollbar bg-white">
+                        <div v-html="currentSlide.content" class="slide-content text-lg md:text-xl"></div>
+                    </div>
+
+                </div>
+
+            </transition>
+        </main>
+
+        <!-- Footer -->
+        <footer
+            class="relative z-20 bg-black text-white p-3 border-t-4 border-brand-cyan flex justify-between font-mono text-sm uppercase">
+            <span>PL/SQL MODULE: STORED PROCEDURES</span>
+            <span class="text-green-400 animate-pulse">SYSTEM_ONLINE</span>
+        </footer>
+
+        <!-- Menu Overlay -->
+        <transition name="fade">
+            <div v-if="showMenu"
+                class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-10 backdrop-blur-sm"
+                @click.self="showMenu = false">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl max-h-full overflow-y-auto p-4">
+                    <button v-for="(slide, index) in slides" :key="index" @click="goToSlide(index)"
+                        class="p-6 bg-white border-4 border-black shadow-solid-md hover:shadow-solid-lg hover:-translate-y-2 transition-transform text-left group relative">
+                        <span class="absolute top-2 right-2 text-xs font-black text-gray-300">{{ pad(index + 1)
+                            }}</span>
+                        <span class="block text-sm font-black text-brand-pink mb-2">{{ slide.section }}</span>
+                        <h3 class="text-lg font-anton text-black group-hover:text-brand-purple leading-tight">{{
+                            slide.title }}</h3>
+                    </button>
+                </div>
+                <button @click="showMenu = false"
+                    class="absolute top-8 right-8 text-white text-5xl hover:rotate-90 transition-transform">
+                    <ion-icon name="close-circle"></ion-icon>
+                </button>
+            </div>
+        </transition>
+
+    </div>
+
+    <script src="presentacion_script.js"></script>
+</body>
+
+</html>

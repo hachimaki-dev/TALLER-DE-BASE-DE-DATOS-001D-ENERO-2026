@@ -65,6 +65,15 @@ createApp({
                 color: "#6B2FD9", // Purple
                 image: "url('https://images.unsplash.com/photo-1550439062-609e1531270e?q=80&w=2070&auto=format&fit=crop')", // Placeholder code/collaboration image
                 previewText: "Crea procedimientos complejos hackeando las bases de datos de tus compañeros."
+            },
+            {
+                id: 8,
+                title: "PL/SQL: PROCEDIMIENTOS",
+                subtitle: "Stored Procs & Triggers",
+                url: "Presentacion_Procedimientos.html",
+                color: "#FF0080", // Pink
+                image: "url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop')", // Example laptop/code image
+                previewText: "Aprende a persistir tu lógica con Procedimientos Almacenados y automatizar con Triggers."
             }
         ]);
 
