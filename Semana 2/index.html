@@ -35,9 +35,9 @@
 
         <!-- Header -->
         <header class="p5-header">
-            <div class="p5-title-box">
-                <h1 class="p5-title">REPOSITORIO DE <span style="color: var(--p5-red)">TALLERES</span></h1>
-                <div class="p5-subtitle">BASE DE CONOCIMIENTOS</div>
+            <div class="p5-title-box hardcore-glass">
+                <h1 class="p5-title">TALLER DE <span style="color: var(--p5-red)">BASES DE DATOS</span></h1>
+                <div class="p5-subtitle">PL/SQL MASTERY</div>
             </div>
         </header>
 
@@ -51,36 +51,70 @@
             <div class="shape shape-star" style="top: 15%; right: 15%; width: 40px; height: 40px; animation-delay: 1s;">
             </div>
 
-            <div class="p5-divider"></div>
-
-            <!-- Left: Menu -->
-            <div class="p5-menu">
-                <div v-for="(item, index) in menuItems" :key="item.id" class="menu-item"
-                    :class="{ 'active': hoveredItem.id === item.id }" @mouseover="setHovered(item)"
-                    @click="navigateTo(item)">
-                    <span class="menu-number">{{ index + 1 }}</span>
-                    {{ item.title }}
+            <!-- HERO SECTION (Top 60%) -->
+            <div class="p5-hero" :style="{ borderColor: hoveredItem.color }">
+                <!-- Dynamic Background Image of Hero -->
+                <div class="hero-bg" :style="{ backgroundImage: hoveredItem.image }">
+                    <!-- Fallback if no image -->
+                    <div v-if="!hoveredItem.image" class="w-full h-full flex items-center justify-center opacity-10">
+                        <ion-icon name="game-controller" style="font-size: 15rem; color: white;"></ion-icon>
+                    </div>
                 </div>
+
+                <!-- Hero Content -->
+                <div class="hero-content">
+                    <div class="hero-header">
+                        <div class="hero-number">{{ menuItems.indexOf(hoveredItem) + 1 }}</div>
+                        <h1 class="hero-title" :style="{ textShadow: '4px 4px 0 ' + hoveredItem.color }">
+                            {{ hoveredItem.title }}
+                        </h1>
+                    </div>
+                    <div class="hero-meta">
+                        <span class="hero-badge" :style="{ background: hoveredItem.color }">{{ hoveredItem.subtitle
+                            }}</span>
+                        <!-- Decorative Line -->
+                        <div class="hero-line" :style="{ background: hoveredItem.color }"></div>
+                    </div>
+                    <p class="hero-description">
+                        {{ hoveredItem.previewText }}
+                    </p>
+
+                    <button class="hero-btn" @click="navigateTo(hoveredItem)"
+                        :style="{ borderColor: hoveredItem.color, color: hoveredItem.color }">
+                        INICIAR TALLER <ion-icon name="arrow-forward"></ion-icon>
+                    </button>
+                </div>
+
+                <!-- Decorative Elements -->
+                <div class="p5-divider-horizontal"></div>
             </div>
 
-            <!-- Right: Preview -->
-            <div class="p5-preview">
-                <div class="preview-card" :style="{ borderColor: hoveredItem.color }">
-                    <div class="preview-image" :style="{ backgroundImage: hoveredItem.image }">
-                        <!-- If no image, maybe show icon -->
-                        <div v-if="!hoveredItem.image"
-                            class="w-full h-full flex items-center justify-center text-black">
-                            <ion-icon name="lock-closed" style="font-size: 6rem; opacity: 0.2;"></ion-icon>
+            <!-- CAROUSEL SECTION (Bottom 40%) -->
+            <div class="p5-carousel-container">
+                <div class="p5-carousel">
+                    <!-- Cards -->
+                    <div v-for="(item, index) in menuItems" :key="item.id" class="carousel-card"
+                        :class="{ 'active': hoveredItem.id === item.id }" @mouseover="setHovered(item)"
+                        @click="navigateTo(item)" :style="{ '--card-color': item.color }">
+
+                        <div class="card-inner">
+                            <span class="card-number">{{ index + 1 }}</span>
+                            <div class="card-icon">
+                                <!-- Icons mappings based on ID or custom -->
+                                <ion-icon v-if="index === 0" name="school"></ion-icon>
+                                <ion-icon v-else-if="index === 1" name="book"></ion-icon>
+                                <ion-icon v-else-if="index === 2" name="construct"></ion-icon>
+                                <ion-icon v-else-if="index === 3" name="alert-circle"></ion-icon>
+                                <ion-icon v-else-if="index === 4" name="trophy"></ion-icon>
+                                <ion-icon v-else-if="index === 5" name="skull"></ion-icon>
+                                <ion-icon v-else-if="index === 6" name="fitness"></ion-icon>
+                                <ion-icon v-else name="cube"></ion-icon>
+                            </div>
+                            <h3 class="card-title">{{ item.title }}</h3>
                         </div>
                     </div>
-                    <div class="preview-title" :style="{ background: hoveredItem.color }">
-                        {{ hoveredItem.subtitle }}
-                    </div>
-                    <div class="preview-overlay">
-                        <p style="font-family: 'Roboto'; font-size: 1.1rem;">
-                            {{ hoveredItem.previewText }}
-                        </p>
-                    </div>
+                    <!-- Spacer for scrolling -->
+                    <div style="min-width: 50px;"></div>
                 </div>
             </div>
 
