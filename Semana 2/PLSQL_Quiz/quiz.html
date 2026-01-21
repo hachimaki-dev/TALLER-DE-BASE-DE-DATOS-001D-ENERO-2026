@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL/SQL SHOWDOWN - Interactive Quiz</title>
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <link rel="stylesheet" href="quiz_styles.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="bg-pattern"></div>
+        <div class="bg-stars"></div>
+
+        <!-- LOBBY SCREEN -->
+        <div v-if="currentScreen === 'lobby'" class="screen">
+            <h1 class="lobby-title">PL/SQL SHOWDOWN</h1>
+            <button class="start-btn" @click="startQuiz">JOIN THE FIGHT</button>
+            <p class="lobby-status">WAITING FOR STUDENTS...</p>
+        </div>
+
+        <!-- PLAYING SCREEN -->
+        <div v-if="currentScreen === 'playing'" class="screen">
+            <div class="header-bar">
+                <div class="progress-box">PREGUNTA {{ currentQuestionIndex + 1 }} / {{ questions.length }}</div>
+                <div class="timer-box">{{ timeLeft }}s</div>
+                <div class="score-box">SCORE: {{ score }} | STREAK: {{ streak }}</div>
+            </div>
+
+            <div class="question-container">
+                <h2 class="question-text">{{ currentQuestion.question }}</h2>
+                <div v-if="currentQuestion.code" class="code-block">{{ currentQuestion.code }}</div>
+            </div>
+
+            <div class="options-grid">
+                <button v-for="(opt, idx) in currentQuestion.options" :key="idx" class="option-btn" :class="{ 
+                        'correct': showFeedback && opt.correct,
+                        'wrong': showFeedback && !opt.correct,
+                        'selected-wrong': showFeedback && selectedOption === opt && !opt.correct
+                    }" :disabled="selectedOption !== null" @click="handleAnswer(opt)">
+                    <span class="option-icon">
+                        <ion-icon :name="['triangle','square','ellipse','close-circle'][idx]"></ion-icon>
+                    </span>
+                    {{ opt.text }}
+                </button>
+            </div>
+
+            <!-- Feedback Overlay -->
+            <div v-if="showFeedback" class="feedback-overlay">
+                <h2 class="feedback-title"
+                    :class="selectedOption && selectedOption.correct ? 'feedback-correct' : 'feedback-wrong'">
+                    {{ selectedOption && selectedOption.correct ? '¡CORRECTO!' : 'FALLASTE' }}
+                </h2>
+                <div v-if="selectedOption && selectedOption.correct" class="score-gained">+{{
+                    selectedOption.pointsGained }} pts</div>
+                <div class="explanation-box">
+                    <strong>Explicación:</strong> {{ currentQuestion.explanation }}
+                </div>
+                <button class="next-btn" @click="nextQuestion">
+                    {{ currentQuestionIndex < questions.length - 1 ? 'SIGUIENTE' : 'VER RESULTADOS' }} </button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div v-if="currentScreen === 'results'" class="screen">
+            <h1 class="lobby-title">MISIÓN COMPLETA</h1>
+            <div class="rank-badge">RANK {{ rank }}</div>
+            <div class="final-score">PUNTAJE FINAL: {{ score }}</div>
+            <button class="start-btn" onclick="window.location.href='../index.html'">VOLVER AL HUB</button>
+        </div>
+
+        <!-- Toasts Layer -->
+        <transition-group name="toast">
+            <div v-for="toast in toasts" :key="toast.id" class="player-toast">
+                <ion-icon name="person-circle"></ion-icon> {{ toast.msg }}
+            </div>
+        </transition-group>
+    </div>
+
+    <script src="quiz_data.js"></script>
+    <script src="quiz_logic.js"></script>
+</body>
+
+</html>

@@ -4,6 +4,15 @@ createApp({
     setup() {
         const menuItems = ref([
             {
+                id: 0,
+                title: "PL/SQL QUIZ",
+                subtitle: "The Showdown",
+                url: "PLSQL_Quiz/quiz.html",
+                color: "#ff0000", // Bright P5 Red
+                image: "url('https://images.unsplash.com/photo-1510511459019-5dee9954889c?q=80&w=2070&auto=format&fit=crop')", // Neon/Grid image
+                previewText: "¡Pon a prueba tus conocimientos! Dinámicas tipo Kahoot sobre variables, bucles, cursores y excepciones."
+            },
+            {
                 id: 1,
                 title: "PL/SQL TUTORIAL",
                 subtitle: "Chapter 1: The Basics",
