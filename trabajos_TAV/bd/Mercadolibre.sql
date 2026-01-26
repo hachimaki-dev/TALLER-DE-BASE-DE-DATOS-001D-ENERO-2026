@@ -122,6 +122,8 @@ CREATE TABLE LOG(
     usuario_operacion VARCHAR2(50)
 );
 
+
+
 COMMIT;
 
 
