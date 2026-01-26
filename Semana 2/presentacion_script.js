@@ -72,7 +72,7 @@ const app = Vue.createApp({
                             </div>
                             <div class="bg-[#2d2d2d] p-4 rounded text-white font-mono text-sm border-4 border-brand-purple shadow-solid-md">
                                 <span class="text-gray-500">-- Procedimiento (Persistente)</span><br>
-                                <span class="text-brand-purple">CREATE OR REPLACE PROCEDURE</span> sp_saludar <span class="text-brand-purple">IS</span><br>
+                                <span class="text-brand-purple [text-shadow:-3px_-3px_0_#fff,1px_-1px_0_#000,-3px_3px_0_#fff,1px_1px_0_#fff]">CREATE OR REPLACE PROCEDURE</span> sp_saludar <span class="text-brand-purple">IS</span><br>
                                 <span class="text-brand-pink">BEGIN</span><br>
                                 &nbsp;&nbsp;DBMS_OUTPUT.PUT_LINE('¡Bienvenido!');<br>
                                 <span class="text-brand-pink">END;</span><br>
@@ -637,19 +637,16 @@ END;
         nextSlide() {
             if (this.currentSlideIndex < this.slides.length - 1) {
                 this.currentSlideIndex++;
-                this.highlightCode();
             }
         },
         prevSlide() {
             if (this.currentSlideIndex > 0) {
                 this.currentSlideIndex--;
-                this.highlightCode();
             }
         },
         goToSlide(index) {
             this.currentSlideIndex = index;
             this.showMenu = false;
-            this.highlightCode();
         },
         toggleMenu() {
             this.showMenu = !this.showMenu;
@@ -658,11 +655,19 @@ END;
             return num.toString().padStart(2, '0');
         },
         highlightCode() {
-            Vue.nextTick(() => {
+            if (this._highlightTimeout) {
+                clearTimeout(this._highlightTimeout);
+            }
+            this._highlightTimeout = setTimeout(() => {
                 if (window.Prism) {
                     window.Prism.highlightAll();
                 }
-            });
+            }, 450);
+        }
+    },
+    watch: {
+        currentSlideIndex() {
+            this.highlightCode();
         }
     },
     mounted() {
@@ -671,5 +676,8 @@ END;
             if (e.key === 'ArrowRight' || e.key === 'Space') this.nextSlide();
             if (e.key === 'ArrowLeft') this.prevSlide();
         });
+    },
+    updated() {
+        this.highlightCode();
     }
 }).mount('#app');

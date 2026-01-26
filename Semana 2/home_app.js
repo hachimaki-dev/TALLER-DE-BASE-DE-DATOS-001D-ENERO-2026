@@ -83,6 +83,33 @@ createApp({
                 color: "#FF0080", // Pink
                 image: "url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop')", // Example laptop/code image
                 previewText: "Aprende a persistir tu lógica con Procedimientos Almacenados y automatizar con Triggers."
+            },
+            {
+                id: 11,
+                title: "PL/SQL: FUNCIONES",
+                subtitle: "Retorno de Valores",
+                url: "Presentacion_Funciones.html",
+                color: "#00C853", // Brand Green
+                image: "url('https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop')", // Math/calculations image
+                previewText: "Aprende a crear funciones que calculan y retornan valores. Úsalas en SELECT, WHERE y más."
+            },
+            {
+                id: 9,
+                title: "PL/SQL: PACKAGES",
+                subtitle: "Architecture & Organization",
+                url: "Presentacion_Paquetes.html",
+                color: "#F2C94C", // Brand Yellow
+                image: "url('https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=2021&auto=format&fit=crop')", // Library / Organization image
+                previewText: "Lleva tu código al siguiente nivel. Aprende a organizar, encapsular y optimizar con Paquetes."
+            },
+            {
+                id: 10,
+                title: "TALLER: PAQUETES S3",
+                subtitle: "Workshop Paso a Paso",
+                url: "../Semana 3/Taller_Paquetes_S3.html",
+                color: "#00C853", // Brand Green
+                image: "url('https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=2070&auto=format&fit=crop')", // Workshop/hands-on image
+                previewText: "Aplica todo sobre Paquetes: crea PKG_USUARIOS, PKG_MENSAJERIA y PKG_ESTADISTICAS para WhatsApp paso a paso."
             }
         ]);
 

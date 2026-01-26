@@ -207,7 +207,7 @@ END;
         goToSlide(index) { this.currentSlideIndex = index; this.showMenu = false; this.highlightCode(); },
         pad(num) { return num.toString().padStart(2, '0'); },
         toggleMenu() { this.showMenu = !this.showMenu; },
-        highlightCode() { Vue.nextTick(() => { if (window.Prism) window.Prism.highlightAll(); }); }
+        highlightCode() { Vue.nextTick(() => { setTimeout(() => { if (window.Prism) window.Prism.highlightAll(); }, 50); }); }
     },
     mounted() {
         this.highlightCode();

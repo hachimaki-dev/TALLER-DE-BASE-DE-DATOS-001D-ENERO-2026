@@ -6,6 +6,65 @@ const app = Vue.createApp({
             // Expanded Workshop Content - Part 2 (Deep Dive Edition)
             slides: [
                 // ====================================================================================
+                // ABSTRACT & GLOBAL SCOPE
+                // ====================================================================================
+                {
+                    section: 'ABSTRAC: ALCANCE GLOBAL',
+                    title: 'Entrenamiento en Escuadrón',
+                    subtitle: 'Dinámica del Taller',
+                    content: `
+                        <div class="h-full flex flex-col justify-center">
+                            <h3 class="text-3xl font-anton mb-4 border-b-4 border-black inline-block">MODALIDAD DE OPERACIÓN</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                                <div class="space-y-4">
+                                    <div class="bg-purple-100 p-4 border-l-8 border-purple-600 shadow-solid-sm">
+                                        <h4 class="font-bangers text-2xl text-purple-800">1. TRABAJO GRUPAL</h4>
+                                        <p class="text-lg">Equipos de <strong>3 integrantes</strong>. Colaboración total en la resolución de la lógica.</p>
+                                    </div>
+                                    <div class="bg-cyan-100 p-4 border-l-8 border-cyan-500 shadow-solid-sm">
+                                        <h4 class="font-bangers text-2xl text-cyan-800">2. RESPONSABILIDAD INDIVIDUAL</h4>
+                                        <p class="text-lg">Cada miembro debe dominar el código. El sistema no perdona la ignorancia.</p>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <ion-icon name="people-circle" class="text-[12rem] text-black animate-pulse"></ion-icon>
+                                    <p class="font-anton text-2xl mt-4 uppercase">Sincronización de Datos</p>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    section: 'ABSTRAC: OBJETIVOS',
+                    title: '¿Qué se espera de ti?',
+                    subtitle: 'Misión y Entregables',
+                    content: `
+                        <div class="h-full flex flex-col justify-center">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h3 class="text-3xl font-anton mb-4 text-orange-600">LA META</h3>
+                                    <p class="text-xl mb-6">Desarrollar componentes de backend robustos usando <strong>Estructuras de Control Avanzadas</strong>.</p>
+                                    <ul class="list-none space-y-3">
+                                        <li class="flex items-center gap-2"><ion-icon name="checkmark-done" class="text-green-500"></ion-icon> Automatizar con <strong>LOOPS</strong></li>
+                                        <li class="flex items-center gap-2"><ion-icon name="checkmark-done" class="text-green-500"></ion-icon> Procesar con <strong>CURSORES</strong></li>
+                                        <li class="flex items-center gap-2"><ion-icon name="checkmark-done" class="text-green-500"></ion-icon> Asegurar con <strong>TRANSACCIONES</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="bg-black text-white p-6 border-4 border-orange-500 shadow-hard transform rotate-1">
+                                    <h4 class="font-bangers text-3xl mb-4 text-orange-400">ENTREGABLE FINAL</h4>
+                                    <div class="space-y-4 font-mono text-sm">
+                                        <p>> Un archivo <span class="text-cyan-400">.sql</span> consolidado.</p>
+                                        <p>> Incluyendo los 3 desafíos resueltos y probados.</p>
+                                        <p>> Formato: Nombres_Grupo_Taller2.sql</p>
+                                        <p class="text-yellow-400 animate-pulse">¡EL TIEMPO CORRE!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+
+                // ====================================================================================
                 // INTRO
                 // ====================================================================================
                 {

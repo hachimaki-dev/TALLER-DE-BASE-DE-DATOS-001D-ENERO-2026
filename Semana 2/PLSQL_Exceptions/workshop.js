@@ -312,7 +312,7 @@ END;`,
                 .replace(/\b(DECLARE|BEGIN|EXCEPTION|WHEN|THEN|END|RAISE|PRAGMA|SELECT|INTO|FROM|WHERE)\b/g, '<span class="text-pink-500">$1</span>')
                 .replace(/\b(DBMS_OUTPUT\.PUT_LINE|UPDATE|SET|ROLLBACK)\b/g, '<span class="text-blue-400 font-bold">$1</span>');
         },
-        highlightCode() { Vue.nextTick(() => { if (window.Prism) window.Prism.highlightAll(); }); }
+        highlightCode() { Vue.nextTick(() => { setTimeout(() => { if (window.Prism) window.Prism.highlightAll(); }, 50); }); }
     },
     mounted() {
         window.app = this;
