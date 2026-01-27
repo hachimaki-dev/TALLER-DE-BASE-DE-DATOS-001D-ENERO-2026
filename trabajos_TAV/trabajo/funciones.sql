@@ -1,38 +1,73 @@
-CREATE OR REPLACE FUNCTION fn_nombre_columna_por_indice(p_indice_columna IN NUMBER)
-RETURN VARCHAR2 AS 
-    columna_no_encontrada EXCEPTION;
-    v_nombre_columna VARCHAR2(20);
-    v_cont NUMBER := 0;
+CREATE OR REPLACE PROCEDURE SP_BUSCAR_CONTENIDO_AVANZADO(
+    p_titulo IN VARCHAR2,
+    p_id_genero IN NUMBER,
+    p_anio IN NUMBER,
+    p_cursor OUT SYS_REFCURSOR
+) IS
 BEGIN
+    OPEN p_cursor FOR
+    SELECT DISTINCT 
+        c.id, 
+        c.titulo_contenido, 
+        c.fecha_salida, 
+        s.nombre_studio
+    FROM CONTENIDOS c
 
-    FOR c IN (SELECT column_name
-    FROM user_tab_columNs
-    WHERE table_name ='MENSAJES')
+    LEFT JOIN CONTENIDO_GENEROS cg ON c.id = cg.id_contenido
 
-    LOOP
-        v_cont := v_cont +1;
-        IF p_indice_columna = v_cont THEN
-             v_nombre_columna := c.column_name;
-             DBMS_OUTPUT.PUT_LINE('La columna con indice '||p_indice_columna||' es: ');
-             RETURN v_nombre_columna;
-        ELSIF c.column_name = NULL THEN
-             RAISE columna_no_encontrada;
-        END IF;
-        
-    END LOOP;
+    LEFT JOIN CONTENIDO_STUDIOS cs ON c.id = cs.id_contenido 
 
-    RAISE columna_no_encontrada;
+    LEFT JOIN STUDIOS s ON cs.id_studio = s.id
+    WHERE 
 
-    EXCEPTION
-        WHEN columna_no_encontrada THEN
-        RAISE_APPLICATION_ERROR(-20055, 'error-text');
+        (p_titulo IS NULL OR UPPER(c.titulo_contenido) LIKE '%' || UPPER(p_titulo) || '%')
 
-    
-    
+        AND (p_id_genero IS NULL OR cg.id_genero = p_id_genero)
+
+        AND (p_anio IS NULL OR EXTRACT(YEAR FROM c.fecha_salida) = p_anio);
 END;
 /
 
+VAR rc REFCURSOR;
+
+EXEC SP_BUSCAR_CONTENIDO_AVANZADO(NULL, 1, NULL, :rc);
+
+PRINT rc;
+
+
+CREATE OR REPLACE PROCEDURE SP_RECOMENDAR_CONTENIDO(
+    p_id_perfil IN NUMBER,
+    p_cursor OUT SYS_REFCURSOR
+) IS
 BEGIN
-    DBMS_OUTPUT.PUT_LINE(FN_NOMBRE_COLUMNA_POR_INDICE(6));
+    OPEN p_cursor FOR
+    SELECT DISTINCT c.titulo_contenido, c.poster_url
+    FROM CONTENIDOS c
+    JOIN CONTENIDO_GENEROS cg ON c.id = cg.id_contenido
+    WHERE cg.id_genero IN (
+        
+        SELECT DISTINCT cg_hist.id_genero
+        FROM HISTORIALES h
+        JOIN CONTENIDO_GENEROS cg_hist ON h.id_contenido = cg_hist.id_contenido
+        WHERE h.id_perfil = p_id_perfil
+    )
+    AND c.id NOT IN (
+        
+        SELECT h_visto.id_contenido 
+        FROM HISTORIALES h_visto 
+        WHERE h_visto.id_perfil = p_id_perfil
+    )
     
+    FETCH FIRST 10 ROWS ONLY; 
 END;
+/
+
+VAR mis_recom REFCURSOR;
+
+
+EXEC SP_RECOMENDAR_CONTENIDO(1, :mis_recom);
+
+
+PRINT mis_recom;
+
+
