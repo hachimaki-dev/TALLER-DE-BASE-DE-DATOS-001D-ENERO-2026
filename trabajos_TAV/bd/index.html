@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatito DVD Rebotando</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #6a0dad; /* Fondo Morado */
+            overflow: hidden; /* Evita que aparezcan barras de desplazamiento */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #bouncing-gif {
+            position: absolute;
+            width: 200px; /* Tamaño del GIF */
+            height: auto;
+            user-select: none; /* Evita que se pueda seleccionar la imagen */
+        }
+    </style>
+</head>
+<body>
+
+    <img id="bouncing-gif" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTJteHQ2aWJ0cGxhNDQyeHV3ZTZtMjVjbTMzZ2Vub3Q5YXltN3pvYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/alXt1ybhSwdntjcmuc/giphy.gif" alt="Gatito bailando">
+
+    <script>
+        const img = document.getElementById('bouncing-gif');
+        
+        // Posición inicial
+        let x = 10;
+        let y = 10;
+
+        // Velocidad (puedes cambiar estos números para hacerlo más rápido o lento)
+        let dirX = 2.5; 
+        let dirY = 2.5;
+
+        // Tamaño de la imagen y la ventana
+        let imgWidth = img.clientWidth;
+        let imgHeight = img.clientHeight;
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+
+        // Actualizar dimensiones si se cambia el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            windowWidth = window.innerWidth;
+            windowHeight = window.innerHeight;
+            imgWidth = img.clientWidth;
+            imgHeight = img.clientHeight;
+        });
+
+        // Asegurarse de que la imagen cargó para obtener sus dimensiones correctas
+        img.onload = () => {
+            imgWidth = img.clientWidth;
+            imgHeight = img.clientHeight;
+            animate();
+        };
+
+        function animate() {
+            // Actualizar posición
+            x += dirX;
+            y += dirY;
+
+            // Colisión con la derecha
+            if (x + imgWidth >= windowWidth) {
+                dirX = -Math.abs(dirX); // Invertir dirección
+                x = windowWidth - imgWidth; // Corregir posición para que no se salga
+            }
+            // Colisión con la izquierda
+            else if (x <= 0) {
+                dirX = Math.abs(dirX);
+                x = 0;
+            }
+
+            // Colisión con abajo
+            if (y + imgHeight >= windowHeight) {
+                dirY = -Math.abs(dirY);
+                y = windowHeight - imgHeight;
+            }
+            // Colisión con arriba
+            else if (y <= 0) {
+                dirY = Math.abs(dirY);
+                y = 0;
+            }
+
+            // Aplicar estilos
+            img.style.left = x + 'px';
+            img.style.top = y + 'px';
+
+            // Repetir animación
+            requestAnimationFrame(animate);
+        }
+
+        // Iniciar animación si la imagen ya estaba en caché
+        if (img.complete) {
+            imgWidth = img.clientWidth;
+            imgHeight = img.clientHeight;
+            animate();
+        }
+    </script>
+</body>
+</html>

@@ -662,3 +662,4 @@ INSERT INTO HISTORIALES (id_perfil, id_contenido, completado) VALUES (19, 2, 'S'
 INSERT INTO HISTORIALES (id_perfil, id_contenido, completado) VALUES (20, 1, 'N');
 
 COMMIT;
+
