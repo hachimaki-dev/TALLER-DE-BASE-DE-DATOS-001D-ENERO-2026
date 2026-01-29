@@ -1,4 +1,9 @@
--- Drop tablas usuario
+-- =============================================================================
+-- MEJORAS DE INTEGRIDAD (CHECK) Y AUDITORÍA (LOGS)
+-- Manteniendo el formato original de la base de datos.
+-- =============================================================================
+
+-- Drop tablas usuario (Se mantiene igual)
 DROP TABLE HISTORIALES CASCADE CONSTRAINTS;
 DROP TABLE FAVORITOS CASCADE CONSTRAINTS;
 DROP TABLE SUBTITULOS CASCADE CONSTRAINTS;
@@ -22,7 +27,21 @@ DROP TABLE SUSCRIPCIONES CASCADE CONSTRAINTS;
 DROP TABLE PLANES_SUSCRIPCION CASCADE CONSTRAINTS;
 DROP TABLE USUARIOS CASCADE CONSTRAINTS;
 
--- TABLAS RELACIONADAS CON USUARIO
+-- 1. NUEVA TABLA PARA AUDITORÍA (LOGS)
+CREATE TABLE LOGS_SISTEMA (
+    id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tabla_afectada VARCHAR2(50) NOT NULL,
+    operacion VARCHAR2(10) NOT NULL, -- INSERT, UPDATE, DELETE
+    id_registro_afectado NUMBER,
+    usuario_bd VARCHAR2(100) DEFAULT USER,
+    fecha_movimiento TIMESTAMP DEFAULT SYSTIMESTAMP,
+    descripcion_cambio VARCHAR2(500)
+);
+
+-- =============================================
+-- TABLAS CON RESTRICCIONES CHECK AGREGADAS
+-- =============================================
+
 CREATE TABLE USUARIOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     email_usuario VARCHAR2(100) UNIQUE NOT NULL,
@@ -30,7 +49,9 @@ CREATE TABLE USUARIOS(
     nombre_usuario VARCHAR2(100) NOT NULL,
     fecha_nacimiento DATE NOT NULL,
     fecha_registro TIMESTAMP DEFAULT SYSTIMESTAMP,
-    usuario_activo CHAR(1) DEFAULT 'S' CHECK (usuario_activo IN ('S', 'N'))
+    usuario_activo CHAR(1) DEFAULT 'S' CHECK (usuario_activo IN ('S', 'N')),
+    -- Mejora: Validar formato simple de email
+    CONSTRAINT ck_email_format CHECK (email_usuario LIKE '%@%.%')
 );
 
 CREATE TABLE PLANES_SUSCRIPCION(
@@ -40,7 +61,10 @@ CREATE TABLE PLANES_SUSCRIPCION(
     dispositivos NUMBER NOT NULL,
     bloqueo_ads CHAR(1) DEFAULT 'N' CHECK (bloqueo_ads IN ('S', 'N')),
     descarga_offline CHAR(1) DEFAULT 'N' CHECK (descarga_offline IN ('S', 'N')),
-    descripcion_plan CLOB
+    descripcion_plan CLOB,
+    -- Mejora: Precios y dispositivos positivos
+    CONSTRAINT ck_precio_min CHECK (precio_plan >= 0),
+    CONSTRAINT ck_disp_min CHECK (dispositivos >= 1)
 );
 
 CREATE TABLE SUSCRIPCIONES(
@@ -50,7 +74,10 @@ CREATE TABLE SUSCRIPCIONES(
     fecha_inicio TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     fecha_termino DATE NOT NULL,
     estado VARCHAR2(20) DEFAULT 'activo' NOT NULL,
-    renovacion_automatica CHAR(1) DEFAULT 'S' CHECK (renovacion_automatica IN ('S', 'N'))
+    renovacion_automatica CHAR(1) DEFAULT 'S' CHECK (renovacion_automatica IN ('S', 'N')),
+    -- Mejora: Consistencia de fechas y estados
+    CONSTRAINT ck_estado_suscripcion CHECK (estado IN ('activo', 'cancelado', 'expirado', 'suspendido')),
+    CONSTRAINT ck_fechas_suscripcion CHECK (fecha_termino >= CAST(fecha_inicio AS DATE))
 );
 
 CREATE TABLE PAGOS(
@@ -61,7 +88,10 @@ CREATE TABLE PAGOS(
     fecha_pago TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
     metodo_pago VARCHAR2(50) NOT NULL,
     estado VARCHAR2(20) DEFAULT 'completado' NOT NULL,
-    id_transaccion VARCHAR2(100) UNIQUE NOT NULL
+    id_transaccion VARCHAR2(100) UNIQUE NOT NULL,
+    -- Mejora: Monto positivo y estados de pago
+    CONSTRAINT ck_monto_pago CHECK (monto > 0),
+    CONSTRAINT ck_estado_pago CHECK (estado IN ('pendiente', 'completado', 'fallido', 'reembolsado'))
 );
 
 CREATE TABLE PERFILES(
@@ -86,9 +116,11 @@ CREATE TABLE DEMOGRAFIAS(
 
 CREATE TABLE EDADES(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    pg VARCHAR2(10) UNIQUE NOT NULL, -- EJEMPLO PG-13, PG-6, R
+    pg VARCHAR2(10) UNIQUE NOT NULL,
     descripcion CLOB NOT NULL,
-    min_edad NUMBER NOT NULL
+    min_edad NUMBER NOT NULL,
+    -- Mejora: Edad mínima no negativa
+    CONSTRAINT ck_min_edad CHECK (min_edad >= 0)
 );
 
 CREATE TABLE GENEROS(
@@ -103,7 +135,7 @@ CREATE TABLE TAGS(
 
 CREATE TABLE REGIONES(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    codigo_region VARCHAR2(3) UNIQUE NOT NULL, -- ejemplo US, JP, MX
+    codigo_region VARCHAR2(3) UNIQUE NOT NULL,
     nombre_region VARCHAR2(100) NOT NULL
 );
 
@@ -129,14 +161,16 @@ CREATE TABLE CONTENIDOS(
     poster_url VARCHAR2(500) NOT NULL,
     banner_url VARCHAR2(500) NOT NULL,
     trailer_url VARCHAR2(500) NOT NULL,
-    estado VARCHAR2(50) DEFAULT 'en emision' NOT NULL -- EJEMPLO EN EMISION, TERMINADO
+    estado VARCHAR2(50) DEFAULT 'en emision' NOT NULL,
+    -- Mejora: Estados de emisión válidos
+    CONSTRAINT ck_estado_cont CHECK (estado IN ('en emision', 'terminado', 'anunciado', 'pausado'))
 );
 
 CREATE TABLE CONTENIDO_STUDIOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_contenido NUMBER REFERENCES CONTENIDOS(id) NOT NULL,
     id_studio NUMBER REFERENCES STUDIOS(id) NOT NULL,
-    rol VARCHAR2(100) NOT NULL -- EJEMPLO PRODUCCION, CO-PRODUCCION
+    rol VARCHAR2(100) NOT NULL
 );
 
 CREATE TABLE CONTENIDO_GENEROS(
@@ -166,7 +200,10 @@ CREATE TABLE TEMPORADAS(
     num_temporada NUMBER NOT NULL,
     nombre_temporada VARCHAR2(500) NOT NULL,
     fecha_inicio DATE NOT NULL,
-    total_episodios NUMBER
+    total_episodios NUMBER,
+    -- Mejora: Números positivos
+    CONSTRAINT ck_num_temp CHECK (num_temporada > 0),
+    CONSTRAINT ck_total_ep CHECK (total_episodios >= 0)
 );
 
 CREATE TABLE EPISODIOS(
@@ -179,7 +216,10 @@ CREATE TABLE EPISODIOS(
     duracion_episodio NUMBER NOT NULL,
     video_url VARCHAR2(500) UNIQUE NOT NULL,
     miniatura_url VARCHAR2(500) UNIQUE NOT NULL,
-    fecha_lanzamiento DATE
+    fecha_lanzamiento DATE,
+    -- Mejora: Duración y número de episodio
+    CONSTRAINT ck_num_ep CHECK (num_episodio > 0),
+    CONSTRAINT ck_duracion CHECK (duracion_episodio > 0)
 );
 
 CREATE TABLE SUBTITULOS(
@@ -189,8 +229,6 @@ CREATE TABLE SUBTITULOS(
     nombre_sub VARCHAR2(100) UNIQUE NOT NULL,
     sub_url VARCHAR2(500) UNIQUE NOT NULL
 );
-
--- TABLAS INTERACCION CON USUARIOS
 
 CREATE TABLE FAVORITOS(
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -662,4 +700,5 @@ INSERT INTO HISTORIALES (id_perfil, id_contenido, completado) VALUES (19, 2, 'S'
 INSERT INTO HISTORIALES (id_perfil, id_contenido, completado) VALUES (20, 1, 'N');
 
 COMMIT;
+
 

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Crunchy DB </title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Contenedor de slides */
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* Decoraciones estilo P4 */
+        .diagonal-stripes {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 40px,
+                rgba(255, 204, 0, 0.03) 40px,
+                rgba(255, 204, 0, 0.03) 80px
+            );
+            animation: rotate-stripes 60s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate-stripes {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Efectos de esquinas */
+        .corner-decor {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 3px solid #ffcc00;
+            pointer-events: none;
+        }
+
+        .corner-decor.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            clip-path: polygon(0 0, 0 100%, 3px 100%, 3px 3px, 100% 3px, 100% 0);
+        }
+
+        .corner-decor.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            clip-path: polygon(100% 100%, 100% 0, calc(100% - 3px) 0, calc(100% - 3px) calc(100% - 3px), 0 calc(100% - 3px), 0 100%);
+        }
+
+        /* Título Principal */
+        .main-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 8rem;
+            color: #ffcc00;
+            text-shadow: 
+                3px 3px 0 #000,
+                6px 6px 0 rgba(255, 204, 0, 0.3);
+            letter-spacing: 8px;
+            animation: title-entrance 1s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes title-entrance {
+            from {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            color: #fff;
+            margin-top: 20px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            animation: fade-in 1s ease-out 0.5s both;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sección de contenido */
+        .content-box {
+            background: linear-gradient(135deg, rgba(255, 204, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            border: 3px solid #ffcc00;
+            border-radius: 0;
+            padding: 50px;
+            max-width: 1200px;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+            animation: box-entrance 0.8s ease-out;
+        }
+
+        @keyframes box-entrance {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 4rem;
+            color: #ffcc00;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: #ffcc00;
+        }
+
+        /* Tabla de mejoras */
+        .improvements-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 40px;
+        }
+
+        .improvements-table th {
+            background: #ffcc00;
+            color: #000;
+            padding: 20px;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            border: 2px solid #ffcc00;
+        }
+
+        .improvements-table td {
+            padding: 20px;
+            border: 2px solid #ffcc00;
+            background: rgba(0, 0, 0, 0.5);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .improvements-table tr:hover td {
+            background: rgba(255, 204, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        .old-state {
+            color: #ff6b6b;
+            font-weight: 300;
+        }
+
+        .new-state {
+            color: #51cf66;
+            font-weight: 700;
+        }
+
+        /* Explicación de funciones */
+        .function-explanation {
+            background: rgba(0, 0, 0, 0.7);
+            border-left: 5px solid #ffcc00;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            animation: slide-in-right 0.6s ease-out;
+        }
+
+        @keyframes slide-in-right {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .function-name {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.5rem;
+            color: #ffcc00;
+            margin-bottom: 15px;
+        }
+
+        .dialogue {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .boss-dialogue {
+            background: rgba(255, 204, 0, 0.2);
+            border-left: 4px solid #ffcc00;
+        }
+
+        .employee-dialogue {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #fff;
+        }
+
+        .speaker {
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .speaker-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffcc00;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .code-snippet {
+            background: #1e1e1e;
+            border: 2px solid #ffcc00;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #51cf66;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-snippet::before {
+            content: 'SQL';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            color: #ffcc00;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Conclusión metacognitiva */
+        .metacognition-list {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .metacognition-list li {
+            padding: 20px;
+            margin: 15px 0;
+            background: rgba(255, 204, 0, 0.1);
+            border-left: 5px solid #ffcc00;
+            font-size: 1.3rem;
+            position: relative;
+            animation: fade-in-up 0.6s ease-out both;
+        }
+
+        .metacognition-list li:nth-child(1) { animation-delay: 0.2s; }
+        .metacognition-list li:nth-child(2) { animation-delay: 0.4s; }
+        .metacognition-list li:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .metacognition-list li::before {
+            content: '▸';
+            color: #ffcc00;
+            font-size: 2rem;
+            position: absolute;
+            left: -30px;
+        }
+
+        .highlight {
+            color: #ffcc00;
+            font-weight: 700;
+        }
+
+        /* Navegación */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+
+        .nav-btn:hover {
+            background: #fff;
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2rem;
+            color: #ffcc00;
+            z-index: 100;
+        }
+
+        /* Animaciones de partículas */
+        .particle {
+            position: absolute;
+            background: #ffcc00;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-particle 4s ease-in-out infinite;
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Logo estilo P4 */
+        .p4-logo {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3rem;
+            color: #ffcc00;
+            letter-spacing: 5px;
+            z-index: 100;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .scrollable-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+
+        .scrollable-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: #ffcc00;
+            border-radius: 5px;
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE DESIGN - MEDIA QUERIES */
+        /* ============================================ */
+
+        /* Tablet (landscape y portrait) */
+        @media screen and (max-width: 1024px) {
+            .main-title {
+                font-size: 5rem;
+                letter-spacing: 5px;
+            }
+
+            .subtitle {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+
+            .content-box {
+                padding: 30px;
+                max-width: 90%;
+            }
+
+            .section-title {
+                font-size: 3rem;
+            }
+
+            .improvements-table th {
+                font-size: 1.5rem;
+                padding: 15px;
+            }
+
+            .improvements-table td {
+                font-size: 1rem;
+                padding: 15px;
+            }
+
+            .function-name {
+                font-size: 2rem;
+            }
+
+            .dialogue {
+                padding: 12px;
+            }
+
+            .speaker {
+                font-size: 1.1rem;
+            }
+
+            .code-snippet {
+                font-size: 0.8rem;
+                padding: 15px;
+            }
+
+            .metacognition-list li {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+
+            .corner-decor {
+                width: 100px;
+                height: 100px;
+            }
+
+            .p4-logo {
+                font-size: 2rem;
+                top: 20px;
+                left: 20px;
+            }
+
+            .slide-indicator {
+                font-size: 1.5rem;
+                top: 20px;
+                right: 20px;
+            }
+
+            .nav-btn {
+                padding: 12px 25px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Mobile (portrait) */
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+
+            .main-title {
+                font-size: 3.5rem;
+                letter-spacing: 3px;
+                text-shadow: 
+                    2px 2px 0 #000,
+                    4px 4px 0 rgba(255, 204, 0, 0.3);
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+                margin-top: 15px;
+            }
+
+            .content-box {
+                padding: 20px;
+                max-width: 95%;
+                clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+
+            .section-title::after {
+                width: 150px;
+            }
+
+            /* Tabla responsive - stack vertical */
+            .improvements-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .improvements-table thead {
+                display: none;
+            }
+
+            .improvements-table tbody,
+            .improvements-table tr,
+            .improvements-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .improvements-table tr {
+                margin-bottom: 20px;
+                background: rgba(255, 204, 0, 0.05);
+                border: 2px solid #ffcc00;
+                padding: 10px;
+            }
+
+            .improvements-table td {
+                border: none;
+                padding: 10px 10px 10px 40%;
+                position: relative;
+                text-align: left;
+            }
+
+            .improvements-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: 700;
+                color: #ffcc00;
+                font-family: 'Bebas Neue', cursive;
+                font-size: 1.1rem;
+            }
+
+            .improvements-table td:first-child {
+                font-size: 1.3rem;
+                padding: 10px;
+                text-align: center;
+                background: rgba(255, 204, 0, 0.2);
+                margin-bottom: 10px;
+            }
+
+            .improvements-table td:first-child::before {
+                content: '';
+            }
+
+            .function-name {
+                font-size: 1.8rem;
+                word-break: break-word;
+            }
+
+            .dialogue {
+                padding: 10px;
+                margin: 10px 0;
+            }
+
+            .speaker {
+                font-size: 1rem;
+            }
+
+            .speaker-icon {
+                width: 25px;
+                height: 25px;
+            }
+
+            .code-snippet {
+                font-size: 0.7rem;
+                padding: 10px;
+                overflow-x: auto;
+            }
+
+            .code-snippet::before {
+                font-size: 0.7rem;
+            }
+
+            .metacognition-list {
+                margin-top: 20px;
+            }
+
+            .metacognition-list li {
+                font-size: 1rem;
+                padding: 12px;
+                padding-left: 15px;
+                margin: 10px 0;
+            }
+
+            .metacognition-list li::before {
+                left: -20px;
+                font-size: 1.5rem;
+            }
+
+            .scrollable-content {
+                max-height: 60vh;
+                padding-right: 10px;
+            }
+
+            .corner-decor {
+                width: 60px;
+                height: 60px;
+            }
+
+            .corner-decor.top-left {
+                top: 10px;
+                left: 10px;
+            }
+
+            .corner-decor.bottom-right {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .p4-logo {
+                font-size: 1.5rem;
+                top: 15px;
+                left: 15px;
+                letter-spacing: 2px;
+            }
+
+            .slide-indicator {
+                font-size: 1.2rem;
+                top: 15px;
+                right: 15px;
+            }
+
+            .nav-controls {
+                bottom: 15px;
+                gap: 10px;
+                flex-wrap: wrap;
+                width: 90%;
+            }
+
+            .nav-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+                letter-spacing: 1px;
+                flex: 1;
+                min-width: 120px;
+            }
+
+            /* Ajustar texto del slide 5 */
+            #slide-5 .content-box > div:last-child {
+                font-size: 2rem !important;
+                margin-top: 30px !important;
+                letter-spacing: 2px !important;
+            }
+        }
+
+        /* Mobile pequeño (< 480px) */
+        @media screen and (max-width: 480px) {
+            .main-title {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .content-box {
+                padding: 15px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .function-name {
+                font-size: 1.5rem;
+            }
+
+            .code-snippet {
+                font-size: 0.65rem;
+                padding: 8px;
+            }
+
+            .metacognition-list li {
+                font-size: 0.9rem;
+                padding: 10px;
+                padding-left: 12px;
+            }
+
+            .p4-logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-btn {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+
+            #slide-5 .content-box > div:last-child {
+                font-size: 1.5rem !important;
+            }
+        }
+
+        /* Landscape mobile */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .main-title {
+                font-size: 3rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                margin-top: 10px;
+            }
+
+            .content-box {
+                padding: 15px;
+                max-width: 95%;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+
+            .scrollable-content {
+                max-height: 50vh;
+            }
+
+            .nav-controls {
+                bottom: 10px;
+            }
+
+            .nav-btn {
+                padding: 8px 20px;
+                font-size: 1rem;
+            }
+
+            .corner-decor {
+                display: none;
+            }
+
+            .metacognition-list li {
+                padding: 10px;
+                margin: 8px 0;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Touch devices - áreas táctiles más grandes */
+        @media (hover: none) and (pointer: coarse) {
+            .nav-btn {
+                padding: 15px 30px;
+                min-height: 50px;
+            }
+
+            .scrollable-content::-webkit-scrollbar {
+                width: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo P4 -->
+    <div class="p4-logo">CRUNCHY∞DB</div>
+
+    <!-- Indicador de slide -->
+    <div class="slide-indicator">
+        <span id="current-slide">1</span> / <span id="total-slides">5</span>
+    </div>
+
+    <div class="slide-container">
+        <!-- SLIDE 1: INTRO -->
+        <div class="slide active" id="slide-1">
+            <div class="diagonal-stripes"></div>
+            <div class="corner-decor top-left"></div>
+            <div class="corner-decor bottom-right"></div>
+            
+            <h1 class="main-title">CRUNCHY DB</h1>
+            <p class="subtitle">Evolución de la Base de Datos</p>
+            <p class="subtitle" style="font-size: 1.2rem; margin-top: 40px; color: #ffcc00;">Sistema de Streaming de Anime</p>
+        </div>
+
+        <!-- SLIDE 2: MEJORAS DE LA BD -->
+        <div class="slide" id="slide-2">
+            <div class="diagonal-stripes"></div>
+            <div class="content-box">
+                <h2 class="section-title">Mejoras Implementadas</h2>
+                <div class="scrollable-content">
+                    <table class="improvements-table">
+                        <thead>
+                            <tr>
+                                <th>ÁREA</th>
+                                <th>ESTADO ORIGINAL</th>
+                                <th>MEJORA APLICADA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="ÁREA"><strong>Validación</strong></td>
+                                <td data-label="ANTES" class="old-state">Valores libres<br>(riesgo de negativos)</td>
+                                <td data-label="DESPUÉS" class="new-state">CHECK Constraints<br>(Precios, Edades > 0)</td>
+                            </tr>
+                            <tr>
+                                <td data-label="ÁREA"><strong>Estados</strong></td>
+                                <td data-label="ANTES" class="old-state">Texto libre sin control</td>
+                                <td data-label="DESPUÉS" class="new-state">Listas Blancas<br>(Estado: 'activo', 'pendiente'...)</td>
+                            </tr>
+                            <tr>
+                                <td data-label="ÁREA"><strong>Auditoría</strong></td>
+                                <td data-label="ANTES" class="old-state">Sin rastro de cambios</td>
+                                <td data-label="DESPUÉS" class="new-state">Tabla LOGS_SISTEMA centralizada</td>
+                            </tr>
+                            <tr>
+                                <td data-label="ÁREA"><strong>Email</strong></td>
+                                <td data-label="ANTES" class="old-state">Cualquier texto</td>
+                                <td data-label="DESPUÉS" class="new-state">Validación de formato de correo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: FUNCIÓN 1 - RECOMENDAR CONTENIDOS -->
+        <div class="slide" id="slide-3">
+            <div class="diagonal-stripes"></div>
+            <div class="content-box">
+                <h2 class="section-title">Función: Recomendar Contenidos</h2>
+                <div class="scrollable-content">
+                    <div class="function-explanation">
+                        <div class="function-name">PR_RECOMENDAR_CONTENIDOS</div>
+                        
+                        <div class="dialogue boss-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon"></span>
+                                <strong>JEFE:</strong>
+                            </div>
+                            <p>"Escucha, necesitamos un sistema de recomendaciones inteligente. Cuando un usuario abre la app, quiero mostrarle contenido que <span class="highlight">realmente le interese</span>, basado en lo que ya ha visto."</p>
+                        </div>
+
+                        <div class="dialogue employee-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon" style="background: #fff;"></span>
+                                <strong>EMPLEADO:</strong>
+                            </div>
+                            <p>"Entendido. ¿Cómo funciona exactamente?"</p>
+                        </div>
+
+                        <div class="dialogue boss-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon"></span>
+                                <strong>JEFE:</strong>
+                            </div>
+                            <p>"Simple. El sistema analiza el <span class="highlight">historial de visualización</span> del usuario y encuentra los 3 géneros que más ha visto. Luego, recomienda 5 series o películas de esos géneros que <span class="highlight">NO haya visto todavía</span>."</p>
+                        </div>
+
+                        <div class="code-snippet">SELECT DISTINCT c.titulo_contenido, c.poster_url, g.nombre_genero
+FROM CONTENIDOS c
+JOIN CONTENIDO_GENEROS cg ON c.id = cg.id_contenido
+WHERE cg.id_genero IN (
+    -- Obtener los 3 géneros más frecuentes del usuario
+    SELECT id_genero FROM (
+        SELECT cg.id_genero, COUNT(*) as frecuencia
+        FROM HISTORIALES h
+        JOIN CONTENIDO_GENEROS cg ON h.id_contenido = cg.id_contenido
+        WHERE h.id_perfil = p_id_perfil
+        GROUP BY cg.id_genero
+        ORDER BY frecuencia DESC
+    ) WHERE ROWNUM <= 3
+)
+AND c.id NOT IN (
+    -- Excluir contenido ya visto
+    SELECT id_contenido FROM HISTORIALES 
+    WHERE id_perfil = p_id_perfil
+)
+AND ROWNUM <= 5;</div>
+
+                        <div class="dialogue employee-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon" style="background: #fff;"></span>
+                                <strong>EMPLEADO:</strong>
+                            </div>
+                            <p>"Perfecto. Esto aumentará el <span class="highlight">engagement</span> porque cada usuario verá contenido personalizado. ¿Qué pasa si hay un error?"</p>
+                        </div>
+
+                        <div class="dialogue boss-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon"></span>
+                                <strong>JEFE:</strong>
+                            </div>
+                            <p>"Usamos un <span class="highlight">EXCEPTION handler</span>. Si algo falla, registramos el error pero no rompemos la experiencia del usuario. La función devuelve los resultados mediante un cursor de salida."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: FUNCIÓN 2 - REGISTRAR CONTENIDO -->
+        <div class="slide" id="slide-4">
+            <div class="diagonal-stripes"></div>
+            <div class="content-box">
+                <h2 class="section-title">Función: Registrar Contenido</h2>
+                <div class="scrollable-content">
+                    <div class="function-explanation">
+                        <div class="function-name">PR_REGISTRAR_CONTENIDO</div>
+                        
+                        <div class="dialogue boss-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon"></span>
+                                <strong>JEFE:</strong>
+                            </div>
+                            <p>"Cuando llegue contenido nuevo al catálogo, necesitamos registrarlo correctamente. Pero antes de insertar, <span class="highlight">debes verificar que no exista ya</span>."</p>
+                        </div>
+
+                        <div class="dialogue employee-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon" style="background: #fff;"></span>
+                                <strong>EMPLEADO:</strong>
+                            </div>
+                            <p>"¿Cómo evitamos duplicados?"</p>
+                        </div>
+
+                        <div class="dialogue boss-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon"></span>
+                                <strong>JEFE:</strong>
+                            </div>
+                            <p>"Primero hacemos un <span class="highlight">SELECT COUNT(*)</span> para verificar si el título ya existe. Si existe, lanzamos un error personalizado. Si no existe, procedemos con el INSERT."</p>
+                        </div>
+
+                        <div class="code-snippet">-- Verificar si ya existe
+SELECT COUNT(*) INTO v_existe 
+FROM CONTENIDOS 
+WHERE UPPER(titulo_contenido) = UPPER(p_titulo);
+
+IF v_existe > 0 THEN
+    RAISE_APPLICATION_ERROR(-20001, 
+        'El contenido ' || p_titulo || ' ya existe.');
+ELSE
+    INSERT INTO CONTENIDOS (
+        id_tipo, titulo_contenido, titulo_original,
+        fecha_salida, id_demografia, id_studio,
+        poster_url, banner_url, trailer_url
+    ) VALUES (
+        p_id_tipo, p_titulo, p_titulo_orig,
+        p_fecha_salida, p_id_demografia, p_id_studio,
+        p_poster_url, p_banner_url, p_trailer_url
+    );
+    COMMIT;
+END IF;</div>
+
+                        <div class="dialogue employee-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon" style="background: #fff;"></span>
+                                <strong>EMPLEADO:</strong>
+                            </div>
+                            <p>"¿Y si algo sale mal durante el INSERT?"</p>
+                        </div>
+
+                        <div class="dialogue boss-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon"></span>
+                                <strong>JEFE:</strong>
+                            </div>
+                            <p>"Por eso usamos <span class="highlight">EXCEPTION WHEN OTHERS</span>. Si hay cualquier error, hacemos un <span class="highlight">ROLLBACK</span> para deshacer los cambios y luego lanzamos el error hacia arriba con RAISE. Esto mantiene la integridad de los datos."</p>
+                        </div>
+
+                        <div class="dialogue employee-dialogue">
+                            <div class="speaker">
+                                <span class="speaker-icon" style="background: #fff;"></span>
+                                <strong>EMPLEADO:</strong>
+                            </div>
+                            <p>"Excelente. Así garantizamos que <span class="highlight">nunca tengamos contenido duplicado</span> y si hay un problema, podemos rastrear exactamente qué ocurrió."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: METACOGNICIÓN -->
+        <div class="slide" id="slide-5">
+            <div class="diagonal-stripes"></div>
+            <div class="content-box">
+                <h2 class="section-title">¿Qué Aprendimos?</h2>
+                <ul class="metacognition-list">
+                    <li>
+                        La base de datos <span class="highlight">no es solo un almacén</span>; es la <span class="highlight">primera línea de defensa</span> del negocio.
+                    </li>
+                    <li>
+                        La <span class="highlight">modularidad mediante Packages</span> permite que la lógica sea <span class="highlight">reutilizable y fácil de mantener</span>.
+                    </li>
+                    <li>
+                        Un sistema sin <span class="highlight">auditoría (Logs)</span> está condenado a no saber por qué falló la bd 
+                    </li>
+                </ul>
+                <div style="text-align: center; margin-top: 50px; font-size: 3rem; color: #ffcc00; font-family: 'Bebas Neue', cursive; letter-spacing: 5px;">
+                    ¡THE TRUTH HAS BEEN REVEALED!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de navegación -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prev-btn" onclick="previousSlide()">◄ ANTERIOR</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">SIGUIENTE ►</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 5;
+
+        function updateSlide() {
+            // Ocultar todos los slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Mostrar slide actual
+            document.getElementById(`slide-${currentSlide}`).classList.add('active');
+
+            // Actualizar indicador
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Actualizar botones
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+
+            // Generar partículas
+            createParticles();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Soporte para gestos táctiles (swipe)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const minSwipeDistance = 50;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const swipeDistance = touchStartX - touchEndX;
+            
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                if (swipeDistance > 0) {
+                    // Swipe izquierda (siguiente)
+                    nextSlide();
+                } else {
+                    // Swipe derecha (anterior)
+                    previousSlide();
+                }
+            }
+        }
+
+        // Crear partículas flotantes
+        function createParticles() {
+            const activeSlide = document.querySelector('.slide.active');
+            const existingParticles = activeSlide.querySelectorAll('.particle');
+            existingParticles.forEach(p => p.remove());
+
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (3 + Math.random() * 3) + 's';
+                activeSlide.appendChild(particle);
+            }
+        }
+
+        // Inicializar
+        updateSlide();
+
+        // Actualizar el total de slides
+        document.getElementById('total-slides').textContent = totalSlides;
+    </script>
+</body>
+</html>
