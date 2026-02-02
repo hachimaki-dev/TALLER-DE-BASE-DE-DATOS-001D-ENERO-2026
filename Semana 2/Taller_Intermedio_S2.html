@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TALLER INTERMEDIO: PL/SQL INTEGRADO</title>
+
+    <!-- Fonts: Bangers (Comic), Anton (Impact), Roboto (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Roboto:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-purple': '#6B2FD9',
+                        'brand-cyan': '#00E0FF',
+                        'brand-orange': '#F2994A',
+                        'brand-yellow': '#F2C94C',
+                        'brand-pink': '#FF0080',
+                    },
+                    fontFamily: {
+                        'bangers': ['Bangers', 'cursive'],
+                        'anton': ['Anton', 'sans-serif'],
+                        'roboto': ['Roboto', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'hard': '8px 8px 0px 0px #000000',
+                        'solid-sm': '4px 4px 0px 0px #000000',
+                        'solid-md': '6px 6px 0px 0px #000000',
+                        'solid-lg': '8px 8px 0px 0px #000000',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Prism.js for Syntax Highlighting (Tomorrow Night) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-plsql.min.js"></script>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .bg-pattern {
+            background-color: #f3f4f6;
+            background-image: radial-gradient(#F2994A 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .bg-halftone {
+            background-image: radial-gradient(circle, #000000 2px, transparent 2.5px);
+            background-size: 10px 10px;
+            opacity: 0.1;
+        }
+
+        .text-stroke-white {
+            -webkit-text-stroke: 2px white;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #F2994A;
+            border: 2px solid #1a1a1a;
+        }
+
+        /* Slide Transitions */
+        .pop-transition-enter-active,
+        .pop-transition-leave-active {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .pop-transition-enter-from,
+        .pop-transition-leave-to {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+    </style>
+</head>
+
+<body class="bg-pattern overflow-hidden font-roboto">
+    <div id="app" class="h-screen w-screen flex flex-col relative" v-cloak>
+
+        <!-- Background Decor -->
+        <div class="fixed inset-0 z-0 bg-halftone pointer-events-none"></div>
+
+        <!-- Header -->
+        <header
+            class="relative z-20 w-full p-4 md:p-6 flex justify-between items-center bg-black/90 border-b-4 border-brand-orange shadow-hard">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-14 h-14 bg-brand-orange border-4 border-black skew-x-[-10deg] flex items-center justify-center shadow-solid-sm">
+                    <ion-icon name="construct" class="text-white text-3xl skew-x-[10deg]"></ion-icon>
+                </div>
+                <!-- Back Link -->
+                <a href="index.html" class="absolute top-2 left-2 text-xs text-gray-500 hover:text-white z-50">Back to
+                    Main</a>
+
+                <div class="skew-x-[-5deg]">
+                    <h1 class="text-4xl font-bangers text-white uppercase tracking-wider leading-none">
+                        TALLER <span class="text-brand-orange">INTERMEDIO</span>
+                    </h1>
+                    <p class="text-sm font-bold bg-white text-black px-2 mt-1 inline-block">INTEGRACIÓN PL/SQL
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- Counter -->
+                <div class="hidden md:flex flex-col items-end skew-x-[-5deg]">
+                    <span class="text-xs font-black text-brand-orange uppercase">PHASE</span>
+                    <span class="text-2xl font-anton text-white">{{ pad(currentSlideIndex + 1) }} <span
+                            class="text-slate-500">/</span> {{ pad(slides.length) }}</span>
+                </div>
+
+                <!-- Nav -->
+                <div class="flex gap-2">
+                    <button @click="prevSlide" :disabled="currentSlideIndex === 0"
+                        class="w-12 h-12 flex items-center justify-center border-4 border-black bg-white text-black hover:bg-brand-yellow hover:scale-110 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-white shadow-solid-sm">
+                        <ion-icon name="caret-back-outline" class="text-xl"></ion-icon>
+                    </button>
+                    <button @click="nextSlide" :disabled="currentSlideIndex === slides.length - 1"
+                        class="w-12 h-12 flex items-center justify-center border-4 border-black bg-black text-brand-orange hover:bg-brand-orange hover:text-black hover:scale-110 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:bg-black disabled:hover:text-brand-orange shadow-solid-sm">
+                        <ion-icon name="caret-forward-outline" class="text-xl"></ion-icon>
+                    </button>
+                    <button @click="toggleMenu"
+                        class="w-12 h-12 flex items-center justify-center border-4 border-black bg-brand-purple text-white hover:bg-brand-purple/80 hover:rotate-6 transition-all shadow-solid-sm">
+                        <ion-icon name="apps-outline" class="text-xl"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8 overflow-hidden">
+            <transition name="pop-transition" mode="out-in">
+
+                <div :key="currentSlideIndex" class="w-full max-w-[90rem] h-full flex flex-col relative">
+
+                    <!-- Title Banner -->
+                    <div class="mb-6 relative z-10">
+                        <span
+                            class="absolute -top-4 -left-2 bg-brand-yellow text-black border-4 border-black px-4 py-1 font-bangers text-xl shadow-solid-sm rotate-[-2deg] z-20">
+                            {{ currentSlide.section }}
+                        </span>
+                        <h2
+                            class="text-4xl md:text-6xl font-anton text-stroke-white text-black uppercase relative z-10 pointer-events-none">
+                            {{ currentSlide.title }}
+                        </h2>
+                        <h2
+                            class="text-4xl md:text-6xl font-anton text-brand-orange absolute top-1 left-1 -z-0 pointer-events-none">
+                            {{ currentSlide.title }}
+                        </h2>
+                    </div>
+
+                    <!-- Card -->
+                    <div
+                        class="flex-1 min-h-0 border-4 border-black shadow-solid-lg p-6 md:p-8 relative overflow-y-auto custom-scrollbar bg-white">
+                        <div v-html="currentSlide.content" class="slide-content text-lg md:text-xl"></div>
+                    </div>
+
+                </div>
+
+            </transition>
+        </main>
+
+        <!-- Footer -->
+        <footer
+            class="relative z-20 bg-black text-white p-3 border-t-4 border-brand-cyan flex justify-between font-mono text-sm uppercase">
+            <span>PL/SQL WORKSHOP: INTEGRATION</span>
+            <span class="text-green-400 animate-pulse">SYSTEM_ONLINE</span>
+        </footer>
+
+        <!-- Menu Overlay -->
+        <transition name="fade">
+            <div v-if="showMenu"
+                class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-10 backdrop-blur-sm"
+                @click.self="showMenu = false">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl max-h-full overflow-y-auto p-4">
+                    <button v-for="(slide, index) in slides" :key="index" @click="goToSlide(index)"
+                        class="p-6 bg-white border-4 border-black shadow-solid-md hover:shadow-solid-lg hover:-translate-y-2 transition-transform text-left group relative">
+                        <span class="absolute top-2 right-2 text-xs font-black text-gray-300">{{ pad(index + 1)
+                            }}</span>
+                        <span class="block text-sm font-black text-brand-orange mb-2">{{ slide.section }}</span>
+                        <h3 class="text-lg font-anton text-black group-hover:text-brand-purple leading-tight">{{
+                            slide.title }}</h3>
+                    </button>
+                </div>
+                <button @click="showMenu = false"
+                    class="absolute top-8 right-8 text-white text-5xl hover:rotate-90 transition-transform">
+                    <ion-icon name="close-circle"></ion-icon>
+                </button>
+            </div>
+        </transition>
+
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, nextTick } = Vue;
+
+        createApp({
+            setup() {
+                const currentSlideIndex = ref(0);
+                const showMenu = ref(false);
+
+                const slides = ref([
+                    {
+                        section: "01. CONTEXTO",
+                        title: "THE WHATSAPP CHALLENGE",
+                        content: `
+                            <div class="grid md:grid-cols-2 gap-8 items-center h-full">
+                                <div>
+                                    <h3 class="text-3xl font-bangers text-brand-purple mb-4">¡ALERTA DE SEGURIDAD!</h3>
+                                    <p class="mb-4">
+                                        Hemos detectado una vulnerabilidad crítica en nuestra base de datos de <strong>WhatsApp</strong>.
+                                        Actualmente, cualquier sistema (o usuario malintencionado) podría insertar mensajes en un chat...
+                                        <span class="bg-yellow-200 font-bold px-1">¡SIN SER PARTE DE ÉL!</span>
+                                    </p>
+                                    <p class="mb-6">
+                                        Tu misión es implementar una arquitectura de <strong>3 Niveles de Defensa</strong> para asegurar la integridad de las comunicaciones.
+                                    </p>
+                                    <ul class="space-y-3 font-bold text-gray-700">
+                                        <li class="flex items-center gap-2">
+                                            <ion-icon name="bulb" class="text-brand-cyan text-xl"></ion-icon>
+                                            NIVEL 1: INTELIGENCIA (Función)
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <ion-icon name="shield" class="text-brand-pink text-xl"></ion-icon>
+                                            NIVEL 2: DEFENSA (Trigger)
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <ion-icon name="flash" class="text-brand-orange text-xl"></ion-icon>
+                                            NIVEL 3: ACCIÓN (Procedimiento)
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="bg-gray-100 p-6 border-4 border-black shadow-solid-sm rotate-1">
+                                    <div class="flex items-center gap-2 mb-4 border-b-2 border-gray-300 pb-2">
+                                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <span class="text-xs font-mono text-gray-500 ml-auto">hacker_terminal.exe</span>
+                                    </div>
+                                    <pre class="font-mono text-sm text-red-600">
+INSERT INTO MENSAJES (...)
+VALUES ('Mensaje espía...', 99, 1);
+-- Usuario 99 NO ESTÁ en el chat 1.
+-- ¡PERO LA BD LO PERMITE!
+                                    </pre>
+                                    <div class="mt-4 text-center">
+                                        <span class="bg-red-600 text-white font-black px-3 py-1 transform -rotate-2 inline-block">
+                                            ACCESS GRANTED (POR ERROR)
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        section: "02. INTELIGENCIA",
+                        title: "LA FUNCIÓN REUTILIZABLE",
+                        content: `
+                            <div class="space-y-6">
+                                <div class="bg-blue-50 border-l-8 border-brand-cyan p-4">
+                                    <h3 class="font-bold text-xl mb-2">OBJETIVO: FN_ES_MIEMBRO_CHAT</h3>
+                                    <p>
+                                        Necesitamos saber SI o NO un usuario pertenece a un chat. Esta lógica se usará en muchos lugares,
+                                        por eso la encapsulamos en una <strong>FUNCIÓN</strong>.
+                                    </p>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h4 class="font-bangers text-2xl text-brand-purple mb-2">ESPECIFICACIONES:</h4>
+                                        <ul class="list-disc pl-5 space-y-2 mb-4 text-sm">
+                                            <li><strong>Nombre:</strong> <code>FN_ES_MIEMBRO_CHAT</code></li>
+                                            <li><strong>Entrada:</strong> <code>p_id_usuario</code> (NUMBER), <code>p_id_chat</code> (NUMBER)</li>
+                                            <li><strong>Salida:</strong> <code>NUMBER</code> (1 si es miembro, 0 si no)</li>
+                                            <li><strong>Lógica:</strong> Consultar la tabla <code>USUARIOS_CHAT</code>.</li>
+                                        </ul>
+                                        <div class="bg-gray-100 p-4 border-2 border-black font-mono text-xs">
+                                            <span class="text-gray-500">-- Ejemplo de uso esperado:</span><br>
+                                            IF FN_ES_MIEMBRO_CHAT(10, 1) = 1 THEN<br>
+                                            &nbsp;&nbsp;DBMS_OUTPUT.PUT_LINE('Es miembro');<br>
+                                            ELSE<br>
+                                            &nbsp;&nbsp;DBMS_OUTPUT.PUT_LINE('Intruso detectado');<br>
+                                            END IF;
+                                        </div>
+                                    </div>
+                                    <div class="relative group">
+                                         <div class="absolute -top-3 -right-3 bg-brand-cyan text-black font-bold px-2 py-1 border-2 border-black z-10 rotate-3">
+                                            JUSTIFICACIÓN
+                                        </div>
+                                        <div class="bg-white border-4 border-black p-4 h-full shadow-solid-sm">
+                                            <p class="italic text-gray-600">
+                                                "¿Por qué una función? Porque la regla de negocio '¿Es miembro?' no cambia,
+                                                pero los lugares donde la preguntamos sí. Si mañana cambia la definición de miembro,
+                                                solo editamos este lugar."
+                                            </p>
+                                            <div class="mt-4 flex justify-center">
+                                                <ion-icon name="git-network" class="text-6xl text-brand-cyan"></ion-icon>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        section: "03. DEFENSA",
+                        title: "EL TRIGGER GUARDIÁN",
+                        content: `
+                             <div class="space-y-6">
+                                <div class="bg-red-50 border-l-8 border-brand-pink p-4">
+                                    <h3 class="font-bold text-xl mb-2">OBJETIVO: TRG_SEGURIDAD_MENSAJES</h3>
+                                    <p>
+                                        Incluso si el programador olvida verificar la función, la BASE DE DATOS debe protegerse a sí misma.
+                                        El Trigger es la última línea de defensa.
+                                    </p>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h4 class="font-bangers text-2xl text-brand-purple mb-2">ESPECIFICACIONES:</h4>
+                                        <ul class="list-disc pl-5 space-y-2 mb-4 text-sm">
+                                            <li><strong>Nombre:</strong> <code>TRG_SEGURIDAD_MENSAJES</code></li>
+                                            <li><strong>Evento:</strong> <code>BEFORE INSERT</code> en tabla <code>MENSAJES</code></li>
+                                            <li><strong>Nivel:</strong> FOR EACH ROW</li>
+                                            <li><strong>Lógica:</strong>
+                                                <ol class="list-decimal pl-5 mt-1">
+                                                    <li>Llamar a <code>FN_ES_MIEMBRO_CHAT</code> usando los <code>:NEW.id_usuario</code> y <code>:NEW.id_chat</code>.</li>
+                                                    <li>Si devuelve 0, lanzar error: <br><code>RAISE_APPLICATION_ERROR(-20001, 'USUARIO NO AUTORIZADO EN ESTE CHAT')</code>.</li>
+                                                </ol>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="relative group">
+                                         <div class="absolute -top-3 -right-3 bg-brand-pink text-white font-bold px-2 py-1 border-2 border-black z-10 -rotate-2">
+                                            JUSTIFICACIÓN
+                                        </div>
+                                        <div class="bg-white border-4 border-black p-4 h-full shadow-solid-sm">
+                                            <p class="italic text-gray-600">
+                                                "¿Por qué un Trigger? Porque la seguridad no debe depender de la buena memoria del desarrollador
+                                                backend. La integridad de los datos es sagrada y se verifica al momento de escribir en disco,
+                                                sin excepciones."
+                                            </p>
+                                            <div class="mt-4 flex justify-center">
+                                                <ion-icon name="lock-closed" class="text-6xl text-brand-pink"></ion-icon>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        section: "04. ACCIÓN",
+                        title: "EL PROCEDIMIENTO INTERFAZ",
+                        content: `
+                            <div class="space-y-6">
+                                <div class="bg-orange-50 border-l-8 border-brand-orange p-4">
+                                    <h3 class="font-bold text-xl mb-2">OBJETIVO: SP_ENVIAR_MENSAJE</h3>
+                                    <p>
+                                        Finalmente, necesitamos un método fácil para que las aplicaciones envíen mensajes.
+                                        Las apps no suelen tener el ID del usuario a mano, pero sí el número de teléfono.
+                                    </p>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h4 class="font-bangers text-2xl text-brand-purple mb-2">ESPECIFICACIONES:</h4>
+                                        <ul class="list-disc pl-5 space-y-2 mb-4 text-sm">
+                                            <li><strong>Nombre:</strong> <code>SP_ENVIAR_MENSAJE</code></li>
+                                            <li><strong>Entrada:</strong> <code>p_telefono</code> (VARCHAR2), <code>p_chat_id</code> (NUMBER), <code>p_mensaje</code> (CLOB)</li>
+                                            <li><strong>Lógica:</strong>
+                                                <ol class="list-decimal pl-5 mt-1">
+                                                    <li>Buscar el <code>ID</code> del usuario usando el <code>p_telefono</code>.</li>
+                                                    <li>Intentar hacer el <code>INSERT</code> en <code>MENSAJES</code>.</li>
+                                                    <li>Capturar errores (ej: usuario no encontrado, o el error -20001 del trigger).</li>
+                                                    <li>Imprimir resultado con <code>DBMS_OUTPUT</code>.</li>
+                                                </ol>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="relative group">
+                                         <div class="absolute -top-3 -right-3 bg-brand-orange text-black font-bold px-2 py-1 border-2 border-black z-10 rotate-2">
+                                            JUSTIFICACIÓN
+                                        </div>
+                                        <div class="bg-white border-4 border-black p-4 h-full shadow-solid-sm">
+                                            <p class="italic text-gray-600">
+                                                "¿Por qué un Procedure? Para abstraer la complejidad. La aplicación frontend no necesita saber
+                                                cómo buscar IDs o cómo validar permisos. Solo dice 'Envía esto desde este número' y la base de datos hace el trabajo sucio."
+                                            </p>
+                                            <div class="mt-4 flex justify-center">
+                                                <ion-icon name="navigate" class="text-6xl text-brand-orange"></ion-icon>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    }
+                ]);
+
+                const prevSlide = () => {
+                    if (currentSlideIndex.value > 0) {
+                        currentSlideIndex.value--;
+                    }
+                };
+
+                const nextSlide = () => {
+                    if (currentSlideIndex.value < slides.value.length - 1) {
+                        currentSlideIndex.value++;
+                    }
+                };
+
+                const goToSlide = (index) => {
+                    currentSlideIndex.value = index;
+                    showMenu.value = false;
+                };
+
+                const toggleMenu = () => {
+                    showMenu.value = !showMenu.value;
+                };
+
+                const pad = (num) => {
+                    return num.toString().padStart(2, '0');
+                };
+
+                const currentSlide = Vue.computed(() => slides.value[currentSlideIndex.value]);
+
+                onMounted(() => {
+                    Prism.highlightAll();
+                });
+
+                return {
+                    currentSlideIndex,
+                    slides,
+                    prevSlide,
+                    nextSlide,
+                    goToSlide,
+                    currentSlide,
+                    showMenu,
+                    toggleMenu,
+                    pad
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

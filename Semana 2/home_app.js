@@ -94,6 +94,15 @@ createApp({
                 previewText: "Aprende a crear funciones que calculan y retornan valores. Úsalas en SELECT, WHERE y más."
             },
             {
+                id: 12,
+                title: "TALLER INTERMEDIO",
+                subtitle: "Integración Total",
+                url: "Taller_Intermedio_S2.html",
+                color: "#F2994A", // Orange
+                image: "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop')", // Integration image
+                previewText: "Domina los 3 niveles: Función (Inteligencia), Trigger (Defensa) y Procedimiento (Acción). Justificación total."
+            },
+            {
                 id: 9,
                 title: "PL/SQL: PACKAGES",
                 subtitle: "Architecture & Organization",
@@ -110,6 +119,15 @@ createApp({
                 color: "#00C853", // Brand Green
                 image: "url('https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?q=80&w=2070&auto=format&fit=crop')", // Workshop/hands-on image
                 previewText: "Aplica todo sobre Paquetes: crea PKG_USUARIOS, PKG_MENSAJERIA y PKG_ESTADISTICAS para WhatsApp paso a paso."
+            },
+            {
+                id: 13,
+                title: "MongoDB: NOSQL",
+                subtitle: "Bases de Datos Documentales",
+                url: "Presentacion_MongoDB.html",
+                color: "#00ED64", // MongoDB Green
+                image: "url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2034&auto=format&fit=crop')", // Database/server image
+                previewText: "Explora el mundo NoSQL: documentos JSON, operadores de búsqueda, CRUD completo y modelado de datos con MongoDB."
             }
         ]);
 
