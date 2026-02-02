@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEAM DB: SISTEMA VAULT-TEC</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --vault-yellow: #ffcf40;
+            --vault-blue: #047cc0;
+            --terminal-green: #00ff41;
+            --cyber-cyan: #00ffff;
+            --warning-red: #ff3333;
+            --rust-orange: #ff6b35;
+            --bg-dark: #0a0e0f;
+            --panel-bg: rgba(15, 20, 25, 0.95);
+            --scan-line: rgba(0, 255, 65, 0.05);
+        }
+
+        * { 
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--terminal-green); }
+            50% { opacity: 0.7; text-shadow: 0 0 20px var(--terminal-green), 0 0 30px var(--terminal-green); }
+        }
+
+        @keyframes bootSequence {
+            0% { opacity: 0; transform: scale(1.05) rotateX(5deg); filter: brightness(1.5); }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; transform: scale(1) rotateX(0); filter: brightness(1); }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            background-image: 
+                repeating-linear-gradient(0deg, var(--scan-line) 0px, transparent 1px, transparent 2px, var(--scan-line) 3px),
+                radial-gradient(ellipse at center, rgba(4, 124, 192, 0.15) 0%, transparent 70%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="rgba(255,207,64,0.02)" width="1" height="1" x="20" y="30"/><rect fill="rgba(255,207,64,0.02)" width="1" height="1" x="80" y="70"/><rect fill="rgba(255,207,64,0.02)" width="1" height="1" x="50" y="50"/></svg>');
+            background-size: 100% 100%, 100% 100%, 200px 200px;
+            color: var(--terminal-green);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* CRT Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 999;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        /* Scanline */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(transparent, var(--terminal-green), transparent);
+            opacity: 0.3;
+            z-index: 998;
+            pointer-events: none;
+            animation: scanline 6s linear infinite;
+        }
+
+        .vault-border {
+            position: fixed;
+            pointer-events: none;
+            z-index: 997;
+        }
+
+        .vault-border.top {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(180deg, var(--panel-bg) 0%, transparent 100%);
+            border-bottom: 3px solid var(--vault-yellow);
+            box-shadow: 0 0 20px rgba(255, 207, 64, 0.5);
+        }
+
+        .vault-border.bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(0deg, var(--panel-bg) 0%, transparent 100%);
+            border-top: 3px solid var(--vault-yellow);
+            box-shadow: 0 0 20px rgba(255, 207, 64, 0.5);
+        }
+
+        .corner-detail {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--vault-yellow);
+            pointer-events: none;
+            z-index: 996;
+        }
+
+        .corner-detail.tl {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            box-shadow: -5px -5px 15px rgba(255, 207, 64, 0.3);
+        }
+
+        .corner-detail.tr {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+            box-shadow: 5px -5px 15px rgba(255, 207, 64, 0.3);
+        }
+
+        .corner-detail.bl {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+            box-shadow: -5px 5px 15px rgba(255, 207, 64, 0.3);
+        }
+
+        .corner-detail.br {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            box-shadow: 5px 5px 15px rgba(255, 207, 64, 0.3);
+        }
+
+        .presentation-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            perspective: 1000px;
+        }
+
+        .slide {
+            display: none;
+            width: 85%;
+            height: 85%;
+            padding: 60px;
+            border: 4px solid var(--vault-yellow);
+            box-shadow: 
+                0 0 30px rgba(255, 207, 64, 0.3),
+                inset 0 0 50px rgba(0, 0, 0, 0.7),
+                inset 0 0 100px rgba(4, 124, 192, 0.1);
+            background: var(--panel-bg);
+            position: relative;
+            overflow-y: auto;
+            clip-path: polygon(
+                20px 0, calc(100% - 20px) 0, 100% 20px,
+                100% calc(100% - 20px), calc(100% - 20px) 100%,
+                20px 100%, 0 calc(100% - 20px), 0 20px
+            );
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            animation: bootSequence 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        /* Rivets decoration */
+        .slide::before,
+        .slide::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, var(--rust-orange) 40%, #2a2a2a 70%);
+            border-radius: 50%;
+            box-shadow: 
+                inset 2px 2px 3px rgba(0, 0, 0, 0.6),
+                0 0 5px rgba(255, 107, 53, 0.4);
+            z-index: 10;
+        }
+
+        .slide::before {
+            top: 30px;
+            left: 30px;
+        }
+
+        .slide::after {
+            top: 30px;
+            right: 30px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        h1 { 
+            font-size: 3.2rem; 
+            color: var(--vault-yellow); 
+            text-shadow: 
+                0 0 20px rgba(255, 207, 64, 0.8),
+                0 0 40px rgba(255, 207, 64, 0.4),
+                3px 3px 0 rgba(0, 0, 0, 0.5);
+            margin-bottom: 15px;
+            animation: glitch 10s infinite;
+        }
+
+        h2 { 
+            font-size: 1.8rem; 
+            color: var(--terminal-green); 
+            border-bottom: 3px solid var(--vault-blue);
+            padding-bottom: 15px; 
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
+            position: relative;
+        }
+
+        h2::before {
+            content: ">>> ";
+            color: var(--rust-orange);
+            margin-right: 10px;
+        }
+
+        h3 { 
+            font-size: 1.3rem; 
+            color: var(--cyber-cyan); 
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
+        }
+        
+        p, li { 
+            font-size: 1.5rem; 
+            line-height: 1.7; 
+            color: #c8d4db;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        strong { 
+            color: var(--vault-yellow); 
+            font-weight: bold; 
+            text-shadow: 0 0 5px rgba(255, 207, 64, 0.4);
+        }
+        
+        ul { 
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--rust-orange);
+            font-size: 1.3rem;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: var(--cyber-cyan);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.8);
+            border-left: 5px solid var(--vault-yellow);
+            border-right: 5px solid var(--vault-blue);
+            padding: 20px;
+            color: #d4d4d4;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            overflow-x: auto;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.9),
+                0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            line-height: 1.6;
+        }
+
+        pre::before {
+            content: "TERMINAL VAULT-TEC v2.1.47";
+            position: absolute;
+            top: -25px;
+            left: 0;
+            font-size: 0.9rem;
+            color: var(--vault-yellow);
+            font-family: 'Press Start 2P';
+        }
+
+        .code-keyword { color: var(--rust-orange); font-weight: bold; }
+        .code-string { color: var(--vault-yellow); }
+        .code-comment { color: #4a7c59; font-style: italic; }
+
+        .mermaid {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid var(--vault-blue);
+            box-shadow: 0 0 20px rgba(4, 124, 192, 0.3);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 60px;
+            right: 60px;
+            z-index: 1000;
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, rgba(255, 207, 64, 0.2) 0%, rgba(4, 124, 192, 0.2) 100%);
+            color: var(--vault-yellow);
+            border: 3px solid var(--vault-yellow);
+            padding: 15px 30px;
+            font-family: 'Press Start 2P';
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            position: relative;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            text-shadow: 0 0 5px rgba(255, 207, 64, 0.5);
+            box-shadow: 0 0 15px rgba(255, 207, 64, 0.3);
+        }
+
+        button:hover {
+            background: var(--vault-yellow);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 207, 64, 0.8);
+            transform: translateY(-3px);
+            border-color: var(--rust-orange);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 50px;
+            right: 60px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Press Start 2P';
+            font-size: 0.9rem;
+            color: var(--terminal-green);
+            z-index: 995;
+        }
+
+        .status-indicator::before {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: var(--terminal-green);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--terminal-green);
+            animation: pulse 2s infinite;
+        }
+
+        .pip-boy-frame {
+            position: relative;
+            border: 3px solid var(--terminal-green);
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.3);
+            box-shadow: 
+                inset 0 0 20px rgba(0, 255, 65, 0.1),
+                0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--vault-yellow), transparent);
+            margin: 30px 0;
+            box-shadow: 0 0 10px rgba(255, 207, 64, 0.5);
+        }
+
+        .warning-strip {
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(255, 51, 51, 0.1),
+                rgba(255, 51, 51, 0.1) 20px,
+                rgba(255, 207, 64, 0.1) 20px,
+                rgba(255, 207, 64, 0.1) 40px
+            );
+            border-left: 4px solid var(--warning-red);
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .panel {
+            border: 3px solid var(--vault-blue);
+            padding: 20px;
+            background: rgba(4, 124, 192, 0.05);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--terminal-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--terminal-green);
+        }
+
+        @media (max-width: 1200px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .slide { padding: 40px; }
+            .grid-container { grid-template-columns: 1fr; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="vault-border top"></div>
+    <div class="vault-border bottom"></div>
+    <div class="corner-detail tl"></div>
+    <div class="corner-detail tr"></div>
+    <div class="corner-detail bl"></div>
+    <div class="corner-detail br"></div>
+
+    <div class="status-indicator">SYSTEM ACTIVE</div>
+
+    <div class="presentation-container">
+        
+        <div class="slide active" id="slide1">
+            <div style="text-align: center; margin-top: 8%; animation: bootSequence 1.2s ease-out;">
+                <p style="color: var(--rust-orange); letter-spacing: 8px; font-family: 'Press Start 2P'; font-size: 1.1rem; margin-bottom: 20px;">VAULT-TEC DATABASE PROJECT</p>
+                <h1 style="font-size: 4.5rem; line-height: 1.3;">BASE DE DATOS<br>STEAM</h1>
+                <h3 style="color: var(--cyber-cyan); margin-top: 30px; font-family: 'VT323'; font-size: 2rem;">ARQUITECTURA & LÓGICA PL/SQL</h3>
+                <hr style="border-color: var(--vault-blue); width: 70%; margin: 40px auto; opacity: 0.7;">
+                <div class="pip-boy-frame" style="display: inline-block; margin-top: 30px;">
+                    <p style="font-family: 'VT323'; font-size: 1.8rem;">ESTADO DEL SISTEMA: <span style="color: var(--terminal-green); animation: pulse 1.5s infinite; font-weight: bold;">OPTIMIZADO</span></p>
+                </div>
+                <p style="margin-top: 30px; color: var(--vault-yellow); font-family: 'Press Start 2P'; font-size: 0.9rem;">CLEARANCE LEVEL: OMEGA</p>
+            </div>
+        </div>
+
+        <div class="slide" id="slide2">
+            <h2>01. EL OBJETIVO</h2>
+            <div style="display: flex; gap: 40px; align-items: stretch;">
+                <div style="flex: 1;">
+                    <p>Transformar un script de tablas estáticas en un <strong>Sistema Transaccional Inteligente</strong> similar a Steam o PlayStation Network.</p>
+                    <br>
+                    <h3>REGLAS DE NEGOCIO IMPLEMENTADAS:</h3>
+                    <ul>
+                        <li><strong style="color:var(--rust-orange)">Anti-Cheat:</strong> Nadie gana logros de juegos que no compró.</li>
+                        <li><strong style="color:var(--vault-blue)">Anti-Spam:</strong> Un usuario = Una reseña por juego.</li>
+                        <li><strong style="color:var(--vault-yellow)">Integridad Financiera:</strong> Reportes exactos ignorando errores de tipeo.</li>
+                    </ul>
+                </div>
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                    <div class="pip-boy-frame" style="text-align: center; padding: 40px; width: 100%;">
+                        <span style="font-size: 3.5rem; color: var(--terminal-green); text-shadow: 0 0 20px var(--terminal-green); font-family: 'Press Start 2P'; display: block; margin-bottom: 20px;">PKG_JUEGOS</span>
+                        <p style="font-size: 1.3rem; color: var(--cyber-cyan);">Paquete PL/SQL Centralizado</p>
+                        <div style="margin-top: 20px; font-family: 'VT323'; font-size: 1.4rem; color: var(--vault-yellow);">
+                            [CLASSIFIED: VAULT-TEC]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide3">
+            <h2>02. EVOLUCIÓN ESTRUCTURAL (DDL)</h2>
+            <p>Se crearon <strong>nuevas tablas</strong> que no existían en el script original para soportar la lógica de negocio y seguridad.</p>
+            
+            <div class="grid-container">
+                <div class="panel" style="border-color: var(--terminal-green);">
+                    <h3 style="color: var(--terminal-green)">1. SISTEMA DE LOGROS</h3>
+                    <p style="margin-bottom: 15px;">Necesario para la validación de propiedad en <code>SP_ASIGNAR_LOGRO</code>.</p>
+                    <pre style="margin-top: 20px;">
+<span class="code-comment">-- Catálogo de premios</span>
+CREATE TABLE <span class="code-keyword">LOGROS</span> (
+    id NUMBER PK, 
+    id_juego NUMBER FK, ...
+);
+
+<span class="code-comment">-- Relación N:M (Usuario gana logro)</span>
+CREATE TABLE <span class="code-keyword">USUARIO_LOGROS</span> (
+    id_usuario NUMBER,
+    id_logro NUMBER,
+    fecha DATE DEFAULT SYSDATE
+);</pre>
+                </div>
+
+                <div class="panel" style="border-color: var(--vault-yellow);">
+                    <h3 style="color: var(--vault-yellow)">2. AUDITORÍA DE PRECIOS</h3>
+                    <p style="margin-bottom: 15px;">Soporte para el procedimiento <code>SP_GESTIONAR_PRECIO</code>.</p>
+                    <pre style="margin-top: 20px;">
+<span class="code-comment">-- Historial de cambios</span>
+CREATE TABLE <span class="code-keyword">HISTORIAL_PRECIOS</span> (
+    id_juego NUMBER,
+    precio_anterior NUMBER,
+    precio_nuevo NUMBER,
+    fecha_cambio DATE
+);</pre>
+                    <p style="font-size: 1.3rem; color: #9db3c0; margin-top: 15px;">Permite rastrear la inflación o descuentos de los juegos en el tiempo.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide4">
+            <h2>03. LÓGICA SOCIAL (Reseñas)</h2>
+            <div class="warning-strip">
+                <p><strong>Procedimiento:</strong> <code>SP_PUBLICAR_RESENA</code></p>
+                <p>Controla que el usuario tenga el juego Y que no haya opinado antes.</p>
+            </div>
+
+            <pre style="margin-top: 30px;">
+<span class="code-keyword">PROCEDURE</span> SP_PUBLICAR_RESENA (...) <span class="code-keyword">AS</span>
+<span class="code-keyword">BEGIN</span>
+    <span class="code-comment">-- 1. ¿Compró el juego?</span>
+    <span class="code-keyword">SELECT</span> COUNT(*) <span class="code-keyword">INTO</span> v_posee_juego 
+    <span class="code-keyword">FROM</span> BIBLIOTECA_USUARIO 
+    <span class="code-keyword">WHERE</span> id_usuario = p_id_usuario 
+      <span class="code-keyword">AND</span> id_juego = p_id_juego;
+
+    <span class="code-keyword">IF</span> v_posee_juego = 0 <span class="code-keyword">THEN</span>
+        RAISE_APPLICATION_ERROR(-20010, 
+            <span class="code-string">'ERROR: No tienes el juego.'</span>);
+    <span class="code-keyword">END IF</span>;
+
+    <span class="code-comment">-- 2. ¿Ya opinó? (Validación lógica)</span>
+    <span class="code-keyword">SELECT</span> COUNT(*) <span class="code-keyword">INTO</span> v_existe_resena ...
+    
+    <span class="code-keyword">INSERT INTO</span> RESENAS ...;
+    <span class="code-keyword">COMMIT</span>;
+<span class="code-keyword">END</span>;</pre>
+        </div>
+
+        <div class="slide" id="slide5">
+            <h2>04. SEGURIDAD (Logros)</h2>
+            <div class="warning-strip">
+                <p><strong>Procedimiento:</strong> <code>SP_ASIGNAR_LOGRO</code></p>
+                <p>Utiliza las tablas nuevas <code>LOGROS</code> y <code>USUARIO_LOGROS</code> para cruzar datos y evitar hacks.</p>
+            </div>
+
+            <div class="mermaid">
+                graph LR
+                A[Input: ID Logro] -->|Busca en| B(Tabla LOGROS)
+                B -->|Obtiene ID Juego| C{Verifica BIBLIOTECA}
+                C -- Tiene Juego --> D[INSERT en USUARIO_LOGROS]
+                C -- No Tiene --> E[ERROR -20020]
+                style E fill:#ff3333,color:#fff,stroke:#ff3333,stroke-width:3px
+                style D fill:#00ff41,color:#000,stroke:#00ff41,stroke-width:3px
+                style B fill:#047cc0,stroke:#00ffff,stroke-width:2px,color:#fff
+                style A fill:#ffcf40,stroke:#ff6b35,stroke-width:2px,color:#000
+                style C fill:#333,stroke:#00ff41,stroke-width:2px,color:#00ff41
+            </div>
+
+            <pre style="margin-top: 30px;">
+<span class="code-comment">-- Verificación de Seguridad "Anti-Hack"</span>
+<span class="code-keyword">SELECT</span> COUNT(*) <span class="code-keyword">INTO</span> v_tiene_juego
+<span class="code-keyword">FROM</span> BIBLIOTECA_USUARIO
+<span class="code-keyword">WHERE</span> id_usuario = p_id_usuario 
+  <span class="code-keyword">AND</span> id_juego = v_id_juego;
+
+<span class="code-keyword">IF</span> v_tiene_juego = 0 <span class="code-keyword">THEN</span>
+    RAISE_APPLICATION_ERROR(-20020, 
+        <span class="code-string">'SEGURIDAD: Juego no adquirido.'</span>);
+<span class="code-keyword">END IF</span>;</pre>
+        </div>
+
+        <div class="slide" id="slide6">
+            <h2>05. INTELIGENCIA DE NEGOCIO</h2>
+            <p style="margin-bottom: 20px;"><strong>Funciones:</strong> <code>FN_INGRESOS_POR_JUEGO</code> y <code>FN_TOTAL_HORAS</code></p>
+            <p style="margin-bottom: 30px;">Uso de <code>NVL</code> para nulos y <code>UPPER</code> para robustez de texto.</p>
+
+            <pre>
+<span class="code-keyword">FUNCTION</span> FN_INGRESOS_POR_JUEGO(
+    p_id_juego <span class="code-keyword">NUMBER</span>
+) <span class="code-keyword">RETURN NUMBER IS</span>
+    v_total <span class="code-keyword">NUMBER</span>;
+<span class="code-keyword">BEGIN</span>
+    <span class="code-keyword">SELECT</span> NVL(SUM(monto_pagado), 0)
+    <span class="code-keyword">INTO</span> v_total
+    <span class="code-keyword">FROM</span> TRANSACCIONES
+    <span class="code-keyword">WHERE</span> id_juego = p_id_juego 
+    <span class="code-keyword">AND</span> UPPER(estado) = <span class="code-string">'COMPLETADA'</span>; 
+    <span class="code-comment">-- Normalización para integridad</span>
+
+    <span class="code-keyword">RETURN</span> v_total;
+<span class="code-keyword">END</span>;</pre>
+
+            <div class="pip-boy-frame" style="margin-top: 30px; padding: 20px;">
+                <p style="color: var(--terminal-green); font-size: 1.4rem;">
+                    <strong>NOTA:</strong> La normalización con UPPER() previene errores por inconsistencias en el formato de datos.
+                </p>
+            </div>
+        </div>
+
+        <div class="slide" id="slide7">
+            <div style="text-align: center; margin-top: 12%; animation: bootSequence 1s ease-out;">
+                <h1 style="color: var(--terminal-green); font-size: 4rem; margin-bottom: 30px;">SISTEMA<br>OPERATIVO</h1>
+                <div class="pip-boy-frame" style="display: inline-block; padding: 30px;">
+                    <p style="font-size: 1.5rem; margin-bottom: 20px;">La arquitectura se ha expandido con nuevas tablas (Logros, Historial) y un Paquete PL/SQL robusto.</p>
+                    <hr style="width: 80%; margin: 25px auto;">
+                    <p style="color: var(--cyber-cyan); font-size: 1.4rem;">STATUS: <span style="color: var(--terminal-green); font-weight: bold;">COMPLETADO</span></p>
+                </div>
+                <br><br>
+                <button onclick="location.reload()" style="margin-top: 30px;">REINICIAR TERMINAL</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button onclick="prevSlide()">◄ ANTERIOR</button>
+        <button onclick="nextSlide()">SIGUIENTE ►</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        // Inicializar Mermaid con tema oscuro
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#047cc0',
+                primaryTextColor: '#00ffff',
+                primaryBorderColor: '#ffcf40',
+                lineColor: '#00ff41',
+                secondaryColor: '#ff6b35',
+                tertiaryColor: '#0a0e0f'
+            }
+        });
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) slide.classList.add('active');
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+                playTransitionSound();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+                playTransitionSound();
+            }
+        }
+
+        function playTransitionSound() {
+            // Simulación de sonido de terminal (opcional)
+            console.log('>> SLIDE TRANSITION');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowRight" || e.key === " ") nextSlide();
+            if (e.key === "ArrowLeft") prevSlide();
+        });
+
+        // Easter egg: presionar 'V' para mensaje Vault-Tec
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'v') {
+                console.log('%c[VAULT-TEC] War. War never changes...', 'color: #ffcf40; font-size: 16px; font-family: monospace;');
+            }
+        });
+    </script>
+</body>
+</html>
